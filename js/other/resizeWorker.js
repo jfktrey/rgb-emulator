@@ -311,7 +311,7 @@ Resize.prototype.resizeHeightInterpolated = function (buffer) {
 	//Handle for only one interpolation input being valid for start calculation:
 	for (; weight < 0.25; weight += ratioWeight) {
 		for (pixelOffset = 0; pixelOffset < this.targetWidthMultipliedByChannels;) {
-			outputBuffer[finalOffset++] = buffer[pixelOffset++];
+			outputBuffer[finalOffset++] = Math.round(buffer[pixelOffset++]);
 		}
 	}
 	weight -= 0.25;
@@ -329,7 +329,7 @@ Resize.prototype.resizeHeightInterpolated = function (buffer) {
 	//Handle for only one interpolation input being valid for end calculation:
 	while (finalOffset < this.finalResultSize) {
 		for (pixelOffset = 0, pixelOffsetAccumulated = interpolationHeightSourceReadStop * this.targetWidthMultipliedByChannels; pixelOffset < this.targetWidthMultipliedByChannels; ++pixelOffset) {
-			outputBuffer[finalOffset++] = buffer[pixelOffsetAccumulated++];
+			outputBuffer[finalOffset++] = Math.round(buffer[pixelOffsetAccumulated++]);
 		}
 	}
 	return outputBuffer;
