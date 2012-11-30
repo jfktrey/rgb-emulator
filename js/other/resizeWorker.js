@@ -133,7 +133,8 @@ Resize.prototype.resizeWidthInterpolatedRGB = function (buffer) {
 			outputBuffer[finalOffset + 2] = buffer[pixelOffset + 2];
 		}
 	}
-	weight -= 1/3;
+	//Adjust for overshoot of the last pass's counter:
+	weight -= (1/3) + ((weight - 1/3) / 3);
 	for (var interpolationWidthSourceReadStop = this.widthOriginal - 1; weight < interpolationWidthSourceReadStop; targetPosition += 3, weight += ratioWeight) {
 		//Calculate weightings:
 		secondWeight = weight % 1;
@@ -227,7 +228,8 @@ Resize.prototype.resizeWidthInterpolatedRGBA = function (buffer) {
 			outputBuffer[finalOffset + 3] = buffer[pixelOffset + 3];
 		}
 	}
-	weight -= 1/3;
+	//Adjust for overshoot of the last pass's counter:
+	weight -= (1/3) + ((weight - 1/3) / 3);
 	for (var interpolationWidthSourceReadStop = this.widthOriginal - 1; weight < interpolationWidthSourceReadStop; targetPosition += 4, weight += ratioWeight) {
 		//Calculate weightings:
 		secondWeight = weight % 1;
@@ -314,7 +316,8 @@ Resize.prototype.resizeHeightInterpolated = function (buffer) {
 			outputBuffer[finalOffset++] = Math.round(buffer[pixelOffset++]);
 		}
 	}
-	weight -= 1/3;
+	//Adjust for overshoot of the last pass's counter:
+	weight -= (1/3) + ((weight - 1/3) / 3);
 	for (var interpolationHeightSourceReadStop = this.heightOriginal - 1; weight < interpolationHeightSourceReadStop; weight += ratioWeight) {
 		//Calculate weightings:
 		secondWeight = weight % 1;
