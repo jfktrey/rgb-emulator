@@ -134,7 +134,7 @@ Resize.prototype.resizeWidthInterpolatedRGB = function (buffer) {
 		}
 	}
 	//Adjust for overshoot of the last pass's counter:
-	weight -= (1/3) + ((weight - 1/3) / 3);
+	weight -= 1/3;
 	for (var interpolationWidthSourceReadStop = this.widthOriginal - 1; weight < interpolationWidthSourceReadStop; targetPosition += 3, weight += ratioWeight) {
 		//Calculate weightings:
 		secondWeight = weight % 1;
@@ -229,7 +229,7 @@ Resize.prototype.resizeWidthInterpolatedRGBA = function (buffer) {
 		}
 	}
 	//Adjust for overshoot of the last pass's counter:
-	weight -= (1/3) + ((weight - 1/3) / 3);
+	weight -= 1/3;
 	for (var interpolationWidthSourceReadStop = this.widthOriginal - 1; weight < interpolationWidthSourceReadStop; targetPosition += 4, weight += ratioWeight) {
 		//Calculate weightings:
 		secondWeight = weight % 1;
@@ -317,7 +317,7 @@ Resize.prototype.resizeHeightInterpolated = function (buffer) {
 		}
 	}
 	//Adjust for overshoot of the last pass's counter:
-	weight -= (1/3) + ((weight - 1/3) / 3);
+	weight -= 1/3;
 	for (var interpolationHeightSourceReadStop = this.heightOriginal - 1; weight < interpolationHeightSourceReadStop; weight += ratioWeight) {
 		//Calculate weightings:
 		secondWeight = weight % 1;
