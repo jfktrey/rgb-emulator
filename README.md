@@ -11,7 +11,7 @@ This project is based on Grant Galitz's fantastic [GameBoy-Online emulator](http
 Scope
 -----------------
 
-Currently, the only device which is officially supported is the iPhone 5 running iOS 6. Official support is planned to next spread to iOS devices based on SoC performance and iOS version. The devices which would be officially supported, grouped by when they should a next are:
+Currently, the only device which is officially supported is the iPhone 5 using iOS 6. Official support is planned to next spread to iOS devices based on their hardware capabilities and iOS version. The devices which should be officially supported next are:
 
 *   iPad (4th & 3rd gen)
 *   iPhone 4S, iPad (2nd gen), iPad Mini, iPod Touch (5th gen)
