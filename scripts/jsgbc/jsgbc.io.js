@@ -1,36 +1,20 @@
 "use strict";
 var gameboy = null;						//GameBoyCore object.
 var gbRunInterval = null;				//GameBoyCore Timer
-var settings = [						//Some settings.
-	true, 								//Turn on sound.
-	true,								//Boot with boot ROM first?
-	false,								//Give priority to GameBoy mode
-	1,									//Volume level set.
-	true,								//Colorize GB mode?
-	false,								//Disallow typed arrays?
-	4,									//Interval for the emulator loop.
-	15,									//Audio buffer minimum span amount over x interpreter iterations.
-	30,									//Audio buffer maximum span amount over x interpreter iterations.
-	false,								//Override to allow for MBC1 instead of ROM only (compatibility for broken 3rd-party cartridges).
-	false,								//Override MBC RAM disabling and always allow reading and writing to the banks.
-	false,								//Use the GameBoy boot ROM instead of the GameBoy Color boot ROM.
-	false,								//Scale the canvas in JS, or let the browser scale the canvas?
-	true								//Use image smoothing based scaling?
-];
+
 function start(canvas, ROM) {
 	clearLastEmulation();
 	autoSave();	//If we are about to load a new game, then save the last one...
-	gameboy = new GameBoyCore(canvas, ROM);
-	gameboy.openMBC = openSRAM;
-	gameboy.openRTC = openRTC;
-	gameboy.start();
-	run();
+	gameboy = new GameBoyCore();
+	gameboy.insertCartridge(ROM);
+	gameboy.powerOn();
 }
+
 function run() {
 	if (GameBoyEmulatorInitialized()) {
 		if (!GameBoyEmulatorPlaying()) {
 			gameboy.stopEmulator &= 1;
-			cout("Starting the iterator.", 0);
+			console.info("Starting the iterator.");
 			var dateObj = new Date();
 			gameboy.firstIteration = dateObj.getTime();
 			gameboy.iterations = 0;
@@ -38,14 +22,14 @@ function run() {
 				if (!document.hidden && !document.msHidden && !document.mozHidden && !document.webkitHidden) {
 					gameboy.run();
 				}
-			}, settings[6]);
+			}, gameboy.settings[6]);
 		}
 		else {
-			cout("The GameBoy core is already running.", 1);
+			console.warn("The GameBoy core is already running.");
 		}
 	}
 	else {
-		cout("GameBoy core cannot run while it has not been initialized.", 1);
+		console.warn("GameBoy core cannot run while it has not been initialized.");
 	}
 }
 function pause() {
@@ -54,21 +38,21 @@ function pause() {
 			clearLastEmulation();
 		}
 		else {
-			cout("GameBoy core has already been paused.", 1);
+			console.warn("GameBoy core has already been paused.");
 		}
 	}
 	else {
-		cout("GameBoy core cannot be paused while it has not been initialized.", 1);
+		console.warn("GameBoy core cannot be paused while it has not been initialized.");
 	}
 }
 function clearLastEmulation() {
 	if (GameBoyEmulatorInitialized() && GameBoyEmulatorPlaying()) {
 		clearInterval(gbRunInterval);
 		gameboy.stopEmulator |= 2;
-		cout("The previous emulation has been cleared.", 0);
+		console.info("The previous emulation has been cleared.");
 	}
 	else {
-		cout("No previous emulation was found to be cleared.", 0);
+		console.info("No previous emulation was found to be cleared.");
 	}
 }
 function save() {
@@ -79,14 +63,14 @@ function save() {
 				state_suffix++;
 			}
 			setValue("FREEZE_" + gameboy.name + "_" + state_suffix, gameboy.saveState());
-			cout("Saved the current state as: FREEZE_" + gameboy.name + "_" + state_suffix, 0);
+			console.info("Saved the current state as: FREEZE_" + gameboy.name + "_" + state_suffix);
 		}
 		catch (error) {
-			cout("Could not save the current emulation state(\"" + error.message + "\").", 2);
+			console.error("Could not save the current emulation state(\"" + error.message + "\").");
 		}
 	}
 	else {
-		cout("GameBoy core cannot be saved while it has not been initialized.", 1);
+		console.warn("GameBoy core cannot be saved while it has not been initialized.");
 	}
 }
 function saveSRAM() {
@@ -95,50 +79,50 @@ function saveSRAM() {
 			try {
 				var sram = gameboy.saveSRAMState();
 				if (sram.length > 0) {
-					cout("Saving the SRAM...", 0);
+					console.info("Saving the SRAM...");
 					if (findValue("SRAM_" + gameboy.name) != null) {
 						//Remove the outdated storage format save:
-						cout("Deleting the old SRAM save due to outdated format.", 0);
+						console.info("Deleting the old SRAM save due to outdated format.");
 						deleteValue("SRAM_" + gameboy.name);
 					}
 					setValue("B64_SRAM_" + gameboy.name, arrayToBase64(sram));
 				}
 				else {
-					cout("SRAM could not be saved because it was empty.", 1);
+					console.warn("SRAM could not be saved because it was empty.");
 				}
 			}
 			catch (error) {
-				cout("Could not save the current emulation state(\"" + error.message + "\").", 2);
+				console.error("Could not save the current emulation state(\"" + error.message + "\").");
 			}
 		}
 		else {
-			cout("Cannot save a game that does not have battery backed SRAM specified.", 1);
+			console.warn("Cannot save a game that does not have battery backed SRAM specified.");
 		}
 		saveRTC();
 	}
 	else {
-		cout("GameBoy core cannot be saved while it has not been initialized.", 1);
+		console.warn("GameBoy core cannot be saved while it has not been initialized.");
 	}
 }
 function saveRTC() {	//Execute this when SRAM is being saved as well.
 	if (GameBoyEmulatorInitialized()) {
 		if (gameboy.cTIMER) {
 			try {
-				cout("Saving the RTC...", 0);
+				console.info("Saving the RTC...", 0);
 				setValue("RTC_" + gameboy.name, gameboy.saveRTCState());
 			}
 			catch (error) {
-				cout("Could not save the RTC of the current emulation state(\"" + error.message + "\").", 2);
+				console.error("Could not save the RTC of the current emulation state(\"" + error.message + "\").");
 			}
 		}
 	}
 	else {
-		cout("GameBoy core cannot be saved while it has not been initialized.", 1);
+		console.warn("GameBoy core cannot be saved while it has not been initialized.");
 	}
 }
 function autoSave() {
 	if (GameBoyEmulatorInitialized()) {
-		cout("Automatically saving the SRAM.", 0);
+		console.info("Automatically saving the SRAM.");
 		saveSRAM();
 		saveRTC();
 	}
@@ -146,34 +130,34 @@ function autoSave() {
 function openSRAM(filename) {
 	try {
 		if (findValue("B64_SRAM_" + filename) != null) {
-			cout("Found a previous SRAM state (Will attempt to load).", 0);
+			console.info("Found a previous SRAM state (Will attempt to load).");
 			return base64ToArray(findValue("B64_SRAM_" + filename));
 		}
 		else if (findValue("SRAM_" + filename) != null) {
-			cout("Found a previous SRAM state (Will attempt to load).", 0);
+			console.info("Found a previous SRAM state (Will attempt to load).");
 			return findValue("SRAM_" + filename);
 		}
 		else {
-			cout("Could not find any previous SRAM copy for the current ROM.", 0);
+			console.info("Could not find any previous SRAM copy for the current ROM.");
 		}
 	}
 	catch (error) {
-		cout("Could not open the  SRAM of the saved emulation state.", 2);
+		console.error("Could not open the  SRAM of the saved emulation state.");
 	}
 	return [];
 }
 function openRTC(filename) {
 	try {
 		if (findValue("RTC_" + filename) != null) {
-			cout("Found a previous RTC state (Will attempt to load).", 0);
+			console.info("Found a previous RTC state (Will attempt to load).");
 			return findValue("RTC_" + filename);
 		}
 		else {
-			cout("Could not find any previous RTC copy for the current ROM.", 0);
+			console.info("Could not find any previous RTC copy for the current ROM.");
 		}
 	}
 	catch (error) {
-		cout("Could not open the RTC data of the saved emulation state.", 2);
+		console.error("Could not open the RTC data of the saved emulation state.");
 	}
 	return [];
 }
@@ -182,7 +166,7 @@ function openState(filename, canvas) {
 		if (findValue(filename) != null) {
 			try {
 				clearLastEmulation();
-				cout("Attempting to run a saved emulation state.", 0);
+				console.info("Attempting to run a saved emulation state.");
 				gameboy = new GameBoyCore(canvas, "");
 				gameboy.savedStateFileName = filename;
 				gameboy.returnFromState(findValue(filename));
@@ -193,11 +177,11 @@ function openState(filename, canvas) {
 			}
 		}
 		else {
-			cout("Could not find the save state " + filename + "\".", 2);
+			console.error("Could not find the save state " + filename + "\".");
 		}
 	}
 	catch (error) {
-		cout("Could not open the saved emulation state.", 2);
+		console.error("Could not open the saved emulation state.");
 	}
 }
 function import_save(blobData) {
@@ -205,25 +189,25 @@ function import_save(blobData) {
 	if (blobData && blobData.blobs) {
 		if (blobData.blobs.length > 0) {
 			for (var index = 0; index < blobData.blobs.length; ++index) {
-				cout("Importing blob \"" + blobData.blobs[index].blobID + "\"", 0);
+				console.info("Importing blob \"" + blobData.blobs[index].blobID + "\"");
 				if (blobData.blobs[index].blobContent) {
 					if (blobData.blobs[index].blobID.substring(0, 5) == "SRAM_") {
-						setValue("B64_" + blobData.blobs[index].blobID, base64(blobData.blobs[index].blobContent));
+						setValue("B64_" + blobData.blobs[index].blobID, btoa(blobData.blobs[index].blobContent));
 					}
 					else {
 						setValue(blobData.blobs[index].blobID, JSON.parse(blobData.blobs[index].blobContent));
 					}
 				}
 				else if (blobData.blobs[index].blobID) {
-					cout("Save file imported had blob \"" + blobData.blobs[index].blobID + "\" with no blob data interpretable.", 2);
+					console.error("Save file imported had blob \"" + blobData.blobs[index].blobID + "\" with no blob data interpretable.");
 				}
 				else {
-					cout("Blob chunk information missing completely.", 2);
+					console.error("Blob chunk information missing completely.");
 				}
 			}
 		}
 		else {
-			cout("Could not decode the imported file.", 2);
+			console.error("Could not decode the imported file.");
 		}
 	}
 	else {
@@ -237,16 +221,16 @@ function generateBlob(keyName, encodedData) {
 	//Figure out the length:
 	var totalLength = (saveString.length + 4 + (1 + consoleID.length)) + ((1 + keyName.length) + (4 + encodedData.length));
 	//Append the total length in bytes:
-	saveString += to_little_endian_dword(totalLength);
+	saveString += totalLength.toLittleEndianDWORD();
 	//Append the console ID text's length:
-	saveString += to_byte(consoleID.length);
+	saveString += consoleID.length.toByte();
 	//Append the console ID text:
 	saveString += consoleID;
 	//Append the blob ID:
-	saveString += to_byte(keyName.length);
+	saveString += keyName.length.toByte();
 	saveString += keyName;
 	//Now append the save data:
-	saveString += to_little_endian_dword(encodedData.length);
+	saveString += encodedData.length.toLittleEndianDWORD();
 	saveString += encodedData;
 	return saveString;
 }
@@ -255,7 +239,7 @@ function generateMultiBlob(blobPairs) {
 	//Figure out the initial length:
 	var totalLength = 13 + 4 + 1 + consoleID.length;
 	//Append the console ID text's length:
-	var saveString = to_byte(consoleID.length);
+	var saveString = consoleID.length.toByte();
 	//Append the console ID text:
 	saveString += consoleID;
 	var keyName = "";
@@ -265,16 +249,16 @@ function generateMultiBlob(blobPairs) {
 		keyName = blobPairs[index][0];
 		encodedData = blobPairs[index][1];
 		//Append the blob ID:
-		saveString += to_byte(keyName.length);
+		saveString += keyName.length.toByte();
 		saveString += keyName;
 		//Now append the save data:
-		saveString += to_little_endian_dword(encodedData.length);
+		saveString += encodedData.length.toLittleEndianDWORD();
 		saveString += encodedData;
 		//Update the total length:
 		totalLength += 1 + keyName.length + 4 + encodedData.length;
 	}
 	//Now add the prefix:
-	saveString = "EMULATOR_DATA" + to_little_endian_dword(totalLength) + saveString;
+	saveString = "EMULATOR_DATA" + totalLength.toLittleEndianDWORD() + saveString;
 	return saveString;
 }
 function decodeBlob(blobData) {
@@ -317,17 +301,17 @@ function decodeBlob(blobData) {
 								index += blobLength;
 							}
 							else {
-								cout("Blob length check failed, blob determined to be incomplete.", 2);
+								console.error("Blob length check failed, blob determined to be incomplete.");
 								break;
 							}
 						}
 						else {
-							cout("Blob was incomplete, bailing out.", 2);
+							console.error("Blob was incomplete, bailing out.");
 							break;
 						}
 					}
 					else {
-						cout("Blob was incomplete, bailing out.", 2);
+						console.error("Blob was incomplete, bailing out.");
 						break;
 					}
 				}
@@ -392,7 +376,7 @@ function initNewCanvas() {
 //Call this when resizing the canvas:
 function initNewCanvasSize() {
 	if (GameBoyEmulatorInitialized()) {
-		if (!settings[12]) {
+		if (!gameboy.settings[12]) {
 			if (gameboy.onscreenWidth != 160 || gameboy.onscreenHeight != 144) {
 				gameboy.initLCD();
 			}

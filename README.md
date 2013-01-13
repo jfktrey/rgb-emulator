@@ -1,51 +1,25 @@
-JavaScript GameBoy Color Emulator
-=================================
+JS GBC
+=================
 
-**Copyright (C) 2010 - 2012 Grant Galitz**
+About
+-----------------
 
-A GameBoy Color emulator that utilizes HTML5 canvas and JavaScript audio APIs to provide a full emulation of the console.
+JS GBC is a project that aims to bring GameBoy Color emulation capabilites to any browser which supports modern web standards. Mobile devices are the top priority right now, with iOS being the main testing platform. 
 
-**License:**
+This project is based on Grant Galitz's fantastic [GameBoy-Online emulator](https://github.com/grantgalitz/GameBoy-Online). It has been modified and optimized to run on mobile devices.
 
-*This program is free software; you can redistribute it and/or
-modify it under the terms of the GNU General Public License
-version 2 as published by the Free Software Foundation.
-The full license is available at http://www.gnu.org/licenses/gpl.html
-This program is distributed in the hope that it will be useful,
-but WITHOUT ANY WARRANTY; without even the implied warranty of
-MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
-GNU General Public License for more details.*
+Scope
+-----------------
 
-Known browsers to work well in:
--------------------------------
+Currently, the only device which is officially supported is the iPhone 5 running iOS 6. Official support is planned to next spread to iOS devices based on SoC performance and iOS version. The devices which would be officially supported, grouped by when they should a next are:
 
-* Firefox 4+ (Windows 7, Windows Vista, Mac OS X)
-* Google Chrome 18+
-* Safari 5.1.5+
+*   iPad (4th & 3rd gen)
+*   iPhone 4S, iPad (2nd gen), iPad Mini, iPod Touch (5th gen)
 
-Browsers that suck at performance or fail to run the code correctly:
---------------------------------------------------------------------
+Android devices are an unknown. When running JS GBC on Android devices, be sure to use Chrome instead of the stock browser (performance is much better). I would greatly apppreciate any reports of how this runs, especially on the more powerful Android devices.
 
-* Firefox 4+ (Linux + Windows XP versions of Firefox have audio lockup bugs)
-* Opera (Crashes + Slow + Graphics Glitches)
-* Safari 5.1.X (Below 5.1.5) (Slow or crashes)
-* IE 1-8 (Cannot run)
-* IE 9-10 (Slow)
-* Firefox 1-3.6 (Slow)
-* ALL VERSIONS OF MOBILE SAFARI AND OPERA (Stop pestering me, iOS just **CAN'T** run this well.)
+License
+-----------------
 
-CPU instruction set accuracy test results (Blargg's cpu_instrs.gb test ROM):
------------------------------------------------------
-
-* **GameBoy Online:**
-
-	![GameBoy Online (This emulator)](http://i.imgur.com/ivs7F.png "Passes")
-* **Visual Boy Advance 1.7.2:**
-	
-	![Visual Boy Advance 1.7.2](http://i.imgur.com/NYnYu.png "Fails")
-* **KiGB:**
-
-	![KiGB](http://i.imgur.com/eYHDH.png "Fails")
-* **Gambatte:**
-
-	![Gambatte](http://i.imgur.com/vGHFz.png "Passes")
+This program is free software; you can redistribute it and/or modify it under the terms of the GNU General Public License version 2 as published by the Free Software Foundation. The full license is available at http://www.gnu.org/licenses/gpl.html
+This program is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License for more details.

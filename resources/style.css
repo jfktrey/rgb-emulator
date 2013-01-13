@@ -1,0 +1,122 @@
+* {
+	margin: 0;
+	padding: 0;
+}
+
+body {
+	overflow: hidden;
+	position: fixed;
+	height: 100%;
+	width: 100%;
+	background-color: #000;
+	color: #FFF;
+	margin: 0;
+	padding: 0;
+}
+
+div#display {
+	position: absolute;
+	top: 0;
+	left: 50%;
+	line-height: 0;
+	font-size: 0;
+}
+
+canvas#screen {
+	position: relative;
+	margin-left: -50%;
+	background-color: #333;
+}
+
+div.container {
+	position: absolute;
+	box-sizing: border-box;
+	width: 50%;
+	height: 100%;
+}
+
+div#arrowsContainer {
+	left: 0;
+}
+div#buttonsContainer {
+	right: 0;
+	text-align: right;
+}
+
+object.svg {
+	position: relative;
+	max-width: 2.5in;
+	min-width: 133px;
+	max-height: 2.5in;
+	min-height: 133px;
+	opacity: .35;
+}
+
+#overlay {
+	display: none;
+	position: relative;
+	width: 100%;
+	height: 100%;
+	margin-left: -50%;
+	opacity: .2;
+	
+	transform: translateY(-100%);	/* IT'S NOT PRETTY BUT IT WORKS, DAMMIT */
+	-webkit-transform: translateY(-100%);
+	-moz-transform: translateY(-100%);
+	-ms-transform: translateY(-100%);
+}
+
+/*///////////////////////////////////////////////////////////////////////////////////////////////*/
+
+@media (max-aspect-ratio: 160/144) {	/* MUST BE THE SAME AS THE ASPECT RATIO DESCRIBED IN init.js!!! */
+	
+	div.container {
+		top: 100%;
+	}
+	
+	div#arrowsContainer {
+		padding: 0 15px 0 2px;
+	}
+	
+	div#buttonsContainer {
+		padding: 0 2px 0 15px;
+	}
+	
+	object.svg {
+		width: 100%;
+		
+		transform: translateY(-100%);
+		-webkit-transform: translateY(-100%);
+		-moz-transform: translateY(-100%);
+		-ms-transform: translateY(-100%);
+	}
+	
+}
+
+/*///////////////////////////////////////////////////////////////////////////////////////////////*/
+
+@media (min-aspect-ratio: 160/144) {	/* MUST BE THE SAME AS THE ASPECT RATIO DESCRIBED IN init.js!!! */
+	
+	div.container {
+		top: 50%;
+	}
+	
+	div#arrowsContainer {
+		padding: 0 30px 0 10px;
+	}
+	
+	div#buttonsContainer {
+		padding: 0 10px 0 30px;
+	}
+	
+	object.svg {
+		width: 100%;
+		max-height: 65%;
+		
+		transform: translateY(-50%);
+		-webkit-transform: translateY(-50%);
+		-moz-transform: translateY(-50%);
+		-ms-transform: translateY(-50%);
+	}
+	
+}
