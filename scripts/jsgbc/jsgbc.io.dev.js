@@ -22,10 +22,11 @@ var timeoutHandle = null;
 
 function delayedSave () {
 	window.clearTimeout(timeoutHandle);
-	timeoutHandle = window.setTimeout(autoSave, 300);
+	timeoutHandle = window.setTimeout(function(){autoSave()}, 300);
 }
 
 function start(canvas, ROM) {
+	debugger;
 	clearLastEmulation();
 	autoSave();	//If we are about to load a new game, then save the last one...
 	gameboy = new GameBoyCore(canvas, ROM);
