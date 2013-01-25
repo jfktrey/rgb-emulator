@@ -1,14 +1,22 @@
 $(document).ready(function(){
-	document.body.appendChild($('<div id="rps" style="position:absolute;bottom:0;right:0;color:#0FF;"></div>')[0]);
-	window.RPSlast = Date.now();
-	window.RPSsmooth = new Array(512);
+	'use strict';
 	
-	window.rps = function () {
-		var now = Date.now();
-		RPSsmooth.push(now - RPSlast);
-		RPSsmooth.shift();
-		document.getElementById('rps').innerHTML = 1000 / (RPSsmooth.reduce(function(a, b) { return a + b }) / 512) | 0;
-		RPSlast = now;
+	window.debugHash		= (location.href.indexOf('#debug') !== -1);
+	
+	if (window.debugHash) {
+		document.body.appendChild($('<div id="rps" style="position:absolute;bottom:0;right:0;color:#0FF;"></div>')[0]);
+		window.RPSlast = Date.now();
+		window.RPSsmooth = new Array(512);
+		
+		window.rps = function () {		//Display the number of times we're looping per second
+			var now = Date.now();
+			RPSsmooth.push(now - RPSlast);
+			RPSsmooth.shift();
+			document.getElementById('rps').innerHTML = 1000 / (RPSsmooth.reduce(function(a, b) { return a + b }) / 512) | 0;
+			RPSlast = now;
+		}
+	} else {
+		window.rps = function () {}		//TODO: monkeypatch GameBoyCore.prototype.run to have a reference to rps only if debug enabled
 	}
 });
 
@@ -30,9 +38,7 @@ $(window).load(function () {
 			smoothing:			false,		//settings[13]
 			gbColored:			true,		//settings[4]
 			nativeWidth:		160,		// If this changes, you have to duplicate it in the stylesheet.
-			nativeHeight:		144,
-			overlayEnabled:		false,
-			overlaySelector:	'#overlay'},
+			nativeHeight:		144},
 		
 		audio:	{
 			enabled: 			true,
@@ -180,7 +186,7 @@ $(window).load(function () {
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 //ACTIONS/////////////////////////////////////////////////////////////////////////////////////////////////////////////
 	
-	if (location.href.indexOf('#debug') !== -1) {
+	if (window.debugHash) {
 		config.debug.enabled = true;}
 	if (config.debug.enabled) {
 		window.debug = config.debug;
@@ -188,10 +194,6 @@ $(window).load(function () {
 	
 	if (config.webAppCapable) {
 		$('head').append('<meta name="apple-mobile-web-app-capable" content="yes">');}
-	
-	if (config.screen.overlayEnabled) {		// The stylesheet hides this by default.
-		$(config.screen.overlaySelector).css('display', 'block'); }
-	
 	
 	[
 		config.controls.buttonMask(config.controls.up[0], config.controls.up[1]),
@@ -216,27 +218,6 @@ $(window).load(function () {
 	
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 //"BINDINGS BINDINGS BINDINGS BINDINGS" - Steve Ballmer///////////////////////////////////////////////////////////////
-	
-	gameboy = new GameBoyCore({
-		/*drawingContext:	setupDrawingContext(			TODO: SET UP TO USE DRAWING CONTEXT, NOT CANVAS ELEMENT
-							$(config.screen.selector),
-							config.screen.nativeWidth,
-							config.screen.nativeHeight,
-							config.screen.smoothing
-						),*/
-		canvas:			$(config.screen.selector)[0],
-		colorGBMode:	config.screen.gbColored,
-		audioEnabled:	config.audio.enabled,
-		audioVolume:	config.audio.volume,
-		audioInterval:	[config.audio.minimumInterval, config.audio.maximumInterval],
-		
-		loopInterval:				config.core.emulatorLoopInterval,
-		bootROMFirst:				config.core.bootROMFirst,
-		useGBBootROM:				config.core.useGBBootROM,
-		gbModePriority:				config.core.gbModePriority,
-		compatibilityFix:			config.core.compatibilityFix,
-		overrideMBCRAMLock:			config.core.overrideMBCRAMLock,
-		sramAutosave:				config.core.sramAutosave });
 	
 	sizer.setup({
 		scalingMethod:			config.screen.scaling,

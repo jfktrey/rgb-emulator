@@ -27,22 +27,48 @@
 	}
 	
 	if (debug.remote) {
-		$.getScript('https://www.spotneedle.com/observed/9a9f1b4b-d6ac-43e1-8d1c-f98905fb6adb'); } //SPOTNEEDLE IS THE SHIT
-	
-	/*document.body.appendChild($('<div id="rps" style="position:absolute;bottom:0;right:0;color:#0FF;"></div>')[0]);
-	
-	window.RPSlast = Date.now();
-	window.RPSsmooth = new Array(512);
-	
-	GameBoyCore.prototype.run = (function (originalFn) {
-		var now = Date.now();
-		window.RPSsmooth.push(now - RPSlast);
-		window.RPSsmooth.shift();
-		document.getElementById('rps').innerHTML = 1000 / (window.RPSsmooth.reduce(function(a, b) { return a + b }) / 512) | 0;
-		window.RPSlast = now;
-		
-		return function () {
-			GameBoyCore.prototype.run.apply(originalFn, arguments); // call the original function
-		};
-	})(GameBoyCore.prototype.run);*/
+		$.getScript('https://www.spotneedle.com/observed/9a9f1b4b-d6ac-43e1-8d1c-f98905fb6adb'); }
+
+//////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+//THIS IS LEAGUES FASTER THAN MONKEYPATCHING RPS INTO THE FUNCTION////////////////////////////////////////////////////////////////////
+
+	GameBoyCore.prototype.run = function () {
+		rps();
+		//The preprocessing before the actual iteration loop:
+		if ((this.stopEmulator & 2) === 0) {
+			if ((this.stopEmulator & 1) === 1) {
+				if (!this.CPUStopped) {
+					this.stopEmulator = 0;
+					this.audioUnderrunAdjustment();
+					this.clockUpdate();			//RTC clocking.
+					if (!this.halt) {
+						this.executeIteration();
+					}
+					else {						//Finish the HALT rundown execution.
+						this.CPUTicks = 0;
+						this.calculateHALTPeriod();
+						if (this.halt) {
+							this.updateCore();
+							this.iterationEndRoutine();
+						}
+						else {
+							this.executeIteration();
+						}
+					}
+					//Request the graphics target to be updated:
+					this.requestDraw();
+				}
+				else {
+					this.audioUnderrunAdjustment();
+					this.audioTicks += this.CPUCyclesTotal;
+					this.audioJIT();
+					this.stopEmulator |= 1;			//End current loop.
+				}
+			}
+			else {		//We can only get here if there was an internal error, but the loop was restarted.
+				console.error("Iterator restarted a faulted core.");
+				pause();
+			}
+		}
+	};
 })();

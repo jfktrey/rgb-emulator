@@ -7,7 +7,7 @@
 			$(window).resize(function () {
 				var width, height, pixelRatio = window.devicePixelRatio;
 				
-				if (config.scalingMethod === 'fit') {	//NOTE: include scaling methods
+				if (config.scalingMethod === 'fit') {	//TODO: include scaling methods
 					if (window.innerWidth / window.innerHeight > config.nativeWidth / config.nativeHeight) {
 						height	= window.innerHeight;
 						width	= Math.floor(height * (config.nativeWidth / config.nativeHeight));
@@ -19,7 +19,7 @@
 					height = width = 'auto';
 				}
 				
-				config.jQueryCanvas.parent().andSelf().css('width', width).css('height', height);	//Sizes both the parent and self, so that screen overlay will be properly positioned.
+				config.jQueryCanvas.css('width', width).css('height', height);
 				
 				// Whitespace for portrait mode
 				if (window.innerWidth / window.innerHeight < config.nativeWidth / config.nativeHeight) {

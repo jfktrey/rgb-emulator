@@ -1,13 +1,38 @@
 "use strict";
 var gameboy = null;						//GameBoyCore object.
 var gbRunInterval = null;				//GameBoyCore Timer
+var settings = [						//Some settings.
+	true, 								//Turn on sound.
+	true,								//Boot with boot ROM first?
+	false,								//Give priority to GameBoy mode
+	1,									//Volume level set.
+	true,								//Colorize GB mode?
+	false,								//Disallow typed arrays?
+	4,									//Interval for the emulator loop.
+	15,									//Audio buffer minimum span amount over x interpreter iterations.
+	100,								//Audio buffer maximum span amount over x interpreter iterations.
+	false,								//Override to allow for MBC1 instead of ROM only (compatibility for broken 3rd-party cartridges).
+	false,								//Override MBC RAM disabling and always allow reading and writing to the banks.
+	false,								//Use the GameBoy boot ROM instead of the GameBoy Color boot ROM.
+	false,								//Scale the canvas in JS, or let the browser scale the canvas?
+	false								//Use image smoothing based scaling?
+];
+
+var timeoutHandle = null;
+
+function delayedSave () {
+	window.clearTimeout(timeoutHandle);
+	timeoutHandle = window.setTimeout(autoSave, 300);
+}
 
 function start(canvas, ROM) {
 	clearLastEmulation();
 	autoSave();	//If we are about to load a new game, then save the last one...
-	gameboy = new GameBoyCore();
-	gameboy.insertCartridge(ROM);
-	gameboy.powerOn();
+	gameboy = new GameBoyCore(canvas, ROM);
+	gameboy.openMBC = openSRAM;
+	gameboy.openRTC = openRTC;
+	gameboy.start();
+	run();
 }
 
 function run() {
@@ -22,14 +47,14 @@ function run() {
 				if (!document.hidden && !document.msHidden && !document.mozHidden && !document.webkitHidden) {
 					gameboy.run();
 				}
-			}, gameboy.settings[6]);
+			}, settings[6]);
 		}
 		else {
-			console.warn("The GameBoy core is already running.");
+			console.warning("The GameBoy core is already running.");
 		}
 	}
 	else {
-		console.warn("GameBoy core cannot run while it has not been initialized.");
+		console.warning("GameBoy core cannot run while it has not been initialized.");
 	}
 }
 function pause() {
@@ -38,11 +63,11 @@ function pause() {
 			clearLastEmulation();
 		}
 		else {
-			console.warn("GameBoy core has already been paused.");
+			console.warning("GameBoy core has already been paused.");
 		}
 	}
 	else {
-		console.warn("GameBoy core cannot be paused while it has not been initialized.");
+		console.warning("GameBoy core cannot be paused while it has not been initialized.");
 	}
 }
 function clearLastEmulation() {
@@ -108,7 +133,7 @@ function saveRTC() {	//Execute this when SRAM is being saved as well.
 	if (GameBoyEmulatorInitialized()) {
 		if (gameboy.cTIMER) {
 			try {
-				console.info("Saving the RTC...", 0);
+				console.info("Saving the RTC...");
 				setValue("RTC_" + gameboy.name, gameboy.saveRTCState());
 			}
 			catch (error) {
@@ -122,7 +147,6 @@ function saveRTC() {	//Execute this when SRAM is being saved as well.
 }
 function autoSave() {
 	if (GameBoyEmulatorInitialized()) {
-		console.info("Automatically saving the SRAM.");
 		saveSRAM();
 		saveRTC();
 	}
@@ -211,7 +235,7 @@ function import_save(blobData) {
 		}
 	}
 	else {
-		cout("Could not decode the imported file.", 2);
+		console.error("Could not decode the imported file.");
 	}
 }
 function generateBlob(keyName, encodedData) {
@@ -376,7 +400,7 @@ function initNewCanvas() {
 //Call this when resizing the canvas:
 function initNewCanvasSize() {
 	if (GameBoyEmulatorInitialized()) {
-		if (!gameboy.settings[12]) {
+		if (!settings[12]) {
 			if (gameboy.onscreenWidth != 160 || gameboy.onscreenHeight != 144) {
 				gameboy.initLCD();
 			}
