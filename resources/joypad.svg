@@ -48,5 +48,6 @@
 	1882.76,1448.5 "/>
 <polygon class="clickmask" id="down" opacity="0" fill="#00AEEF" points="434.76,1882.76 434.76,1448.5 941.88,941.76 1448.76,1448.5 
 	1448.76,1882.76 "/>
+<rect class="clickmask" id="glide" x="678.676" y="678.403" opacity="0" fill="#ED1C24" width="526.084" height="526.193"/>
 
 </svg>

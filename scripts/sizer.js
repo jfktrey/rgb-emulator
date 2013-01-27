@@ -33,8 +33,7 @@
 				}
 			});
 			
-			
-			$(window).trigger('resize');	//Make an initial call to the sizer.
+			$(window).trigger('resize');			//Make an initial call to the sizer.
 		}
 	};
 })();

@@ -1,25 +1,3 @@
-$(document).ready(function(){
-	'use strict';
-	
-	window.debugHash		= (location.href.indexOf('#debug') !== -1);
-	
-	if (window.debugHash) {
-		document.body.appendChild($('<div id="rps" style="position:absolute;bottom:0;right:0;color:#0FF;"></div>')[0]);
-		window.RPSlast = Date.now();
-		window.RPSsmooth = new Array(512);
-		
-		window.rps = function () {		//Display the number of times we're looping per second
-			var now = Date.now();
-			RPSsmooth.push(now - RPSlast);
-			RPSsmooth.shift();
-			document.getElementById('rps').innerHTML = 1000 / (RPSsmooth.reduce(function(a, b) { return a + b }) / 512) | 0;
-			RPSlast = now;
-		}
-	} else {
-		window.rps = function () {}		//TODO: monkeypatch GameBoyCore.prototype.run to have a reference to rps only if debug enabled
-	}
-});
-
 $(window).load(function () {
 	'use strict';
 	
@@ -161,24 +139,37 @@ $(window).load(function () {
 	}
 	
 	function attachTouchEvents ( jQueryClickmask, button ) {
-		var id = jQueryClickmask.attr('id');
-		
 		jQueryClickmask
-			.on("touchstart", function (event) {
+			.on('touchstart', function (event) {
 				event.preventDefault();
-				GameBoyKeyDown(id)
-			}).on('touchmove', function (event){
+				GameBoyKeyUp(this.ownerDocument.currentButton);
+				this.ownerDocument.currentButton		= $(this).attr('id');
+				this.ownerDocument.buttonChangeTimeout	= null;
+				GameBoyKeyDown(this.ownerDocument.currentButton);
+			}).on('touchmove', function (event) {		// The way this works right now, you can't press A and B at the same time (or any two buttons on the same SVG document). Not sure if problem.
 				event.preventDefault();
-			}).on("touchend", function () {
-				GameBoyKeyUp(id);
+				
+				var svgDocument		= this.ownerDocument;
+				var mostRecentTouch	= event.originalEvent.touches[event.originalEvent.touches.length - 1];
+				var overButton		= $(svgDocument.elementFromPoint(mostRecentTouch.clientX, mostRecentTouch.clientY)).attr('id');
+				
+				if ((svgDocument.currentButton !== overButton) && (overButton !== 'glide')) {
+					GameBoyKeyUp(svgDocument.currentButton);
+					
+					svgDocument.currentButton = overButton;
+					GameBoyKeyDown(svgDocument.currentButton);
+				}
+			}).on('touchend', function () {
+				GameBoyKeyUp(this.ownerDocument.currentButton);
+				this.ownerDocument.currentButton	= null;
 			});
 		
 		// For browser-based testing only.
 		jQueryClickmask
-			.on("mousedown", function(event) {
+			.on('mousedown', function(event) {
 				event.preventDefault();
 				GameBoyKeyDown(id);
-			}).on("mouseup", function () {
+			}).on('mouseup', function () {
 				GameBoyKeyUp(id);
 			});
 	}
@@ -186,7 +177,7 @@ $(window).load(function () {
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 //ACTIONS/////////////////////////////////////////////////////////////////////////////////////////////////////////////
 	
-	if (window.debugHash) {
+	if (location.href.indexOf('#debug') !== -1) {
 		config.debug.enabled = true;}
 	if (config.debug.enabled) {
 		window.debug = config.debug;
@@ -236,6 +227,6 @@ $(window).load(function () {
 	$(document).preventUIActions();
 	$(config.controls.bothSideSelector).documents().preventUIActions();
 	
-	$.getScript("./demo.js");
+	$.getScript('./demo.js');
 	
 });

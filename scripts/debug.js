@@ -1,4 +1,4 @@
-// Utilities to make debugging. This file should be ignored in production.
+// Utilities to make development easier. This file should be ignored in production.
 
 (function () {
 	var debug = window.debug;
@@ -12,10 +12,25 @@
 		Windows: function () { return navigator.userAgent.match(/IEMobile/i); },
 		any: function () { return (isMobile.Android() || isMobile.BlackBerry() || isMobile.iOS() || isMobile.Opera() || isMobile.Windows()); }};
 	
-	window.log = function(){
-		(log.history) ? log.history.push(arguments) : arguments;
-		if (this.console) console.log(Array.prototype.slice.call(arguments)); };
+	/// Set up the Runs Per Second counter
+	$('body').append('<div id="rps" style="position:absolute;bottom:0;right:0;color:#0FF;"></div>');
+	window.RPScount = 1;
+	window.RPSlast = Date.now();
+	window.RPSsmooth = [];			//Accumulate runs here until we display their average (once every 75 iterations)
 	
+	window.rps = function () {		//Display the number of times we're looping per second
+		var now = Date.now();
+		RPSsmooth.push(now - RPSlast);
+		RPScount++;
+		RPScount = RPScount % 75;	//Don't update the display constantly and slow things down.
+		if (!RPScount) {
+			document.getElementById('rps').innerHTML = 1000 / (RPSsmooth.reduce(function(a, b) { return a + b }) / 75) | 0;
+			RPSsmooth = [];
+		}
+		RPSlast = now;
+	}
+	
+	/// Set up firebug
 	if (debug.firebug) {
 		window.firebugHandle = {
 			enable:	function () {
@@ -26,11 +41,12 @@
 				Firebug.chrome.close(); }};
 	}
 	
+	/// Set up spotneedle
 	if (debug.remote) {
 		$.getScript('https://www.spotneedle.com/observed/9a9f1b4b-d6ac-43e1-8d1c-f98905fb6adb'); }
 
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-//THIS IS LEAGUES FASTER THAN MONKEYPATCHING RPS INTO THE FUNCTION////////////////////////////////////////////////////////////////////
+//THIS IS LEAGUES FASTER THAN MONKEYPATCHING RPS INTO THE FUNCTION (BUT IT'S STILL SLOW)///////////////////////////////////////////
 
 	GameBoyCore.prototype.run = function () {
 		rps();
