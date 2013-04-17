@@ -168,9 +168,53 @@ $(window).load(function () {
 		jQueryClickmask
 			.on('mousedown', function(event) {
 				event.preventDefault();
-				GameBoyKeyDown(id);
+				GameBoyKeyDown($(this).attr('id'));
 			}).on('mouseup', function () {
-				GameBoyKeyUp(id);
+				GameBoyKeyUp($(this).attr('id'));
+			});
+			
+		function getKey(event)
+		{
+			if(event.keyCode == 37)
+			{
+				return "left";
+			}
+			if(event.keyCode == 38)
+			{
+				return "up";
+			}
+			if(event.keyCode == 39)
+			{
+				return "right";
+			}
+			if(event.keyCode == 40)
+			{
+				return "down";
+			}
+			if(event.keyCode == 13)
+			{
+				return "start";
+			}
+			if(event.keyCode == 17)
+			{
+				return "select";
+			}
+			if(event.keyCode == 88)
+			{
+				return "b";
+			}
+			if(event.keyCode == 90)
+			{
+				return "a";
+			}
+		}
+			
+		$(document)
+			.on('keydown', function(event) {
+				event.preventDefault();
+				GameBoyKeyDown(getKey(event));
+			}).on('keyup', function () {
+				GameBoyKeyUp(getKey(event));
 			});
 	}
 	
@@ -226,7 +270,4 @@ $(window).load(function () {
 	
 	$(document).preventUIActions();
 	$(config.controls.bothSideSelector).documents().preventUIActions();
-	
-	$.getScript('./demo.js');
-	
 });

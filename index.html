@@ -35,6 +35,8 @@
 		<script src="./scripts/sizer.js"></script>
 		<script src="./scripts/hideaddr.js"></script>
 		<script src="./scripts/init.js"></script>
+		
+		<script src="//cdnjs.cloudflare.com/ajax/libs/dropbox.js/0.9.2/dropbox.min.js"></script>
 	</head>
 	<body>
 		<div id="display">
@@ -46,5 +48,124 @@
 		<div class="container" id="buttonsContainer">
 			<object class="svg" type="image/svg+xml" id="buttons" data="./resources/buttons.svg"></object>
 		</div>
+		<div style="background: red; width: 100px; height: 100px; position: absolute;" id="saveToDropbox">Salvar no Dropbox</div>
+		<div style="background: red; width: 100px; height: 100px; position: absolute; left: 100px;" id="loadFromDropbox">Carregar do Dropbox</div><br>
+		<div style="background: red; width: 100px; height: 100px; position: absolute; left: 100px; top: 100px;" id="loadGameFromDropbox">Abrir jogo do Dropbox</div>
+
 	</body>
+			<script>
+			
+		$('#loadGameFromDropbox').on('click', loadGameFromDropbox);
+		$('#loadGameFromDropbox').on('touchstart', loadGameFromDropbox);	
+			
+		function loadGameFromDropbox()
+		{
+			var client = new Dropbox.Client({
+				key: 'EQNTGZXXoxA=|GpyGknvyuGqTaABntMNBIleUDDQR2Y32svgW858JWQ==',
+				sandbox: true
+			});
+
+			client.authDriver(new Dropbox.Drivers.Redirect({
+				rememberUser: true
+			}));	
+		  
+			client.authenticate(function(error, data)
+			{
+				if (error) {
+					alert(error);
+				}
+				
+				var filename = prompt('Digite o nome do arquivo:');
+				
+				return client.readFile('/' + filename, function(error, content)
+				{
+					if (error) {
+						return showError(error);
+					}					
+					start($('#screen').get()[0], atob(content));
+				});
+			});
+		}
+		
+		
+		
+		$('#saveToDropbox').on('click', saveToDropbox);
+		$('#saveToDropbox').on('touchstart', saveToDropbox);
+		
+		function saveToDropbox()
+		{
+			var client = new Dropbox.Client({
+				key: 'EQNTGZXXoxA=|GpyGknvyuGqTaABntMNBIleUDDQR2Y32svgW858JWQ==',
+				sandbox: true
+			});
+
+			client.authDriver(new Dropbox.Drivers.Redirect({
+				rememberUser: true
+			}));	
+		  
+			client.authenticate(function(error, data)
+			{
+				if (error) {
+					alert(error);
+				}
+				
+				var key, out = {};
+				for (var i = 0, len = localStorage.length; i < len; i++){
+					key = localStorage.key(i);
+					if(key.indexOf('B64') === 0 )
+					{
+						out[key] = localStorage[key];
+					}
+			    }
+				
+				return client.writeFile('/storage.jsboy', JSON.stringify(out), function(error, stat)
+				{
+					if (error) {
+						return showError(error);
+					}
+					alert('Salvo!');
+				});
+			});
+		}
+		
+		$('#loadFromDropbox').on('click', loadFromDropbox);
+		$('#loadFromDropbox').on('touchstart', loadFromDropbox);
+		
+		function loadFromDropbox()
+		{
+			alert('Iniciando carregamento...');
+			var client = new Dropbox.Client({
+				key: 'EQNTGZXXoxA=|GpyGknvyuGqTaABntMNBIleUDDQR2Y32svgW858JWQ==',
+				sandbox: true
+			});
+
+			client.authDriver(new Dropbox.Drivers.Redirect({
+				rememberUser: true
+			}));	
+		  
+			client.authenticate(function(error, data)
+			{
+				if (error) {
+					alert(error);
+				}
+				
+				return client.readFile('/storage.jsboy', function(error, content)
+				{
+					if (error) {
+						return showError(error);
+					}
+					
+					var items = JSON.parse(content);
+					
+					for( var key in items)
+					{
+						localStorage[key] = items[key];
+					}					
+					alert('Carregado!');
+					window.location.reload();
+				});
+			});
+		}
+		</script>
+	
 </html>
