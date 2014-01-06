@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!DOCTYPE svg PUBLIC "-//W3C//DTD SVG 1.1//EN" "http://www.w3.org/Graphics/SVG/1.1/DTD/svg11.dtd">
+
+<svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" version="1.1" viewBox="0 0 754.313 362.192" style="max-height: 100%;" xml:space="preserve" xmlns:xml="http://www.w3.org/XML/1998/namespace" preserveAspectRatio="xMinYMin meet">
+	<g id="V">
+		<polygon id="B" fill-rule="evenodd" clip-rule="evenodd" fill="#234C51" points="754.313,0 526.824,362.191 376.312,362.191 601.738,0"/>
+		<polygon id="G" fill-rule="evenodd" clip-rule="evenodd" fill="#56B03D" points="225.646,362.191 377.312,362.191 602.738,0 451.537,0"/>
+		<polygon id="R" fill-rule="evenodd" clip-rule="evenodd" fill="#E32C25" points="0,0 151.887,0 294.84,229.548 219.927,350.507"/>
+	</g>
+</svg>

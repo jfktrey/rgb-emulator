@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<!-- The icon can be used freely in both personal and commercial projects with no attribution required, but always appreciated. 
+You may NOT sub-license, resell, rent, redistribute or otherwise transfer the icon without express written permission from iconmonstr.com -->
+
+<!DOCTYPE svg PUBLIC "-//W3C//DTD SVG 1.1//EN" "http://www.w3.org/Graphics/SVG/1.1/DTD/svg11.dtd">
+<svg version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" x="0px" y="0px"
+	 width="512px" height="512px" viewBox="0 0 512 512" enable-background="new 0 0 512 512" xml:space="preserve">
+<path id="cloud-9-icon" d="M383.909,235.768c-42.963,0-77.793,34.828-77.793,77.791c0,42.964,34.83,77.791,77.793,77.791
+	s77.791-34.827,77.791-77.791C461.7,270.596,426.872,235.768,383.909,235.768z M431.718,327.693h-33.673v33.673h-26.006v-33.673
+	h-33.673v-26.005h33.673v-33.672h26.006v33.672h33.673V327.693z M309.476,391.523H143.521c-51.852,0-93.222-41.369-93.222-92.221
+	c0-41.408,27.561-77.127,66.153-88.463c10.854-36.998,49.784-58.686,86.933-48.779c22.24-26.299,54.773-41.584,89.871-41.584
+	c54.319,0,100.616,36.919,113.979,87.812c-14-3.073-28.59-3.34-42.74-0.781c-13.362-32.304-42.668-47.03-71.239-47.03
+	c-50.308,0-70.974,38.08-76.131,52.662c-20.51-29.582-76.177-7.248-64.641,32.348C117.95,239.225,90.3,265.225,90.3,299.303
+	c0,28.795,23.427,52.221,53.222,52.221H282.97c5.331,14.194,13.677,27.213,24.719,38.256
+	C308.278,390.369,308.875,390.949,309.476,391.523z"/>
+</svg>

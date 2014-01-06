@@ -1,90 +1,462 @@
+/* CSS Stylings for RGB */
+
+/*/////////////////////////////////////////////////////////////////////////////////////////////////
+/* Basics */
+
 * {
 	margin: 0;
 	padding: 0;
 }
 
 body {
-	overflow: hidden;
-	position: fixed;
 	height: 100%;
 	width: 100%;
 	background-color: #000;
-	color: #FFF;
+	color: #EEEEEE;
 	margin: 0;
 	padding: 0;
+	font-family: sans-serif;
 }
 
-div#display {
+button {
+	border: none;
+	background: none;
+	margin: 0;
+	padding: 0;
+	outline: none;
+	cursor: pointer;
+	-webkit-tap-highlight-color: rgba(0,0,0,0);
+}
+
+#hideAddressBar {
+	visibility: hidden;
+	display: block;
+}
+
+/*/////////////////////////////////////////////////////////////////////////////////////////////////
+/* Animation */
+
+#modes > *, #menuButton, #context > *, #front {
+	display: none;
+	opacity: 0;
+}
+
+.render {
+	display: block !important;
+}
+
+.show {
+	opacity: 1 !important;
+}
+
+.noTransition {
+	transition: none !important;
+	-moz-transition: none !important;
+	-webkit-transition: none !important;
+}
+
+.fastFade {
+	transition: opacity 0.2s linear;
+	-moz-transition: opacity 0.2s linear;
+	-webkit-transition: opacity 0.2s linear;
+}
+
+.fastSlide {
+	transition: transform 0.6s ease-in-out;
+	-moz-transition: -moz-transform 0.6s ease-in-out;
+	-webkit-transition: -webkit-transform 0.6s ease-in-out;
+}
+
+/*/////////////////////////////////////////////////////////////////////////////////////////////////
+/* Pre-Game UI */
+
+#front { 
+	position: fixed;
+	width: 100%;
+	height: 100%;
+	background-color: #EEEEEE;
+	opacity: 1;
+	color: #000000;
+	overflow-y: scroll;
+	-webkit-overflow-scrolling: touch;
+	
+	transform: translateY(100%);
+	-ms-transform: translateY(100%);
+	-moz-transform: translateY(100%);
+	-webkit-transform: translateY(100%);
+}
+
+#front.show {
+	transform: translateY(0%);
+	-ms-transform: translateY(0%);
+	-moz-transform: translateY(0%);
+	-webkit-transform: translateY(0%);
+}
+
+#title {
+	position: fixed;
+	top: 0;
+	left: 0;
+	width: 100%;
+	padding: 15px;
+	box-sizing: border-box;
+	background: #000000;
+	text-align: center;
+}
+
+#context {
+	background-color: #FFFFFF;
+	width: 100%;
+	padding: 10px 0 10px 24px;
+	border-bottom: 1px solid #D8D8D8;
+	font-family: sans-serif;
+	font-size: 15px;
+	font-weight: bold;
+	text-transform: uppercase;
+	position: fixed;
+	top: 74px;
+	left: 0;
+	box-sizing: border-box;
+}
+
+#context span {
 	position: absolute;
+}
+
+#context #spacer {
+	position: relative !important;
+	display: block !important;
+	width: 0px;
+	overflow: hidden;
+	color: #FFFFFF;
+	white-space: nowrap;
+	float: left;
+}
+
+#menuButton {
+	position: absolute;
+	left: 0;
+	top: 0;
+	padding: 25px;
+	background: transparent;
+
+	transition: opacity 0.2s linear;
+	-moz-transition: opacity 0.2s linear;
+	-webkit-transition: opacity 0.2s linear;
+}
+
+#menuButton.active {
+	background: #FFF;
+}
+
+#menuButton object {
+	height: 24px;
+	pointer-events: none;
+}
+
+#logo {
+	height: 40px;
+}
+
+/*///////////////////////////////////////////////////////////////////////////////////////////////*/
+
+#modes {
+	position: absolute;
+	top: 0;
+	left: 50%;
+	width: 90%;
+	min-width: 150px;
+	max-width: 750px;
+	height: 100%;
+	padding-top: 113px;
+	box-sizing: border-box;
+
+	transform: translateX(-50%);
+	-ms-transform: translateX(-50%);
+	-moz-transform: translateX(-50%);
+	-webkit-transform: translateX(-50%);
+	
+	transition: opacity 0.2s linear;
+	-moz-transition: opacity 0.2s linear;
+	-webkit-transition: opacity 0.2s linear;
+}
+
+#modes > * {
+	position: fixed;
+}
+
+#modes > div {
+	position: fixed;
+	padding-bottom: 20px;
+	width: 100%;
+	height: -webkit-calc(100% - 113px);
+	height: calc(100% - 113px);
+	box-sizing: border-box;
+	overflow-y: scroll;
+	-webkit-overflow-scrolling: touch;
+}
+
+#loading, #connectButton {
+	margin-top: -57px;
+}
+
+#loading {
+	top: 50%;
+	left: 50%;
+	opacity: 0;
+	margin-left: -32px;
+	margin-top: 24px;
+	
+	transition: opacity 0.2s linear;
+	-moz-transition: opacity 0.2s linear;
+	-webkit-transition: opacity 0.2s linear;
+}
+
+#connectButton {
+	opacity: 0;
+	top: 50%;
+	left: 50%;
+	background-color: #000000;
+	text-align: right;
+	color: #EEEEEE;
+	width: 180px;
+
+	margin-top: 20px;
+	padding: 20px;
+	border-radius: 8px;
+
+	font-family: sans-serif;
+	font-size: 25px;
+	font-weight: 100;
+
+	transform: translateX(-50%);
+	-ms-transform: translateX(-50%);
+	-moz-transform: translateX(-50%);
+	-webkit-transform: translateX(-50%);
+}
+
+#connectButton.show {
+	animation-duration: 1s;
+	-ms-animation-duration: 1s;
+	-moz-animation-duration: 1s;
+	-webkit-animation-duration: 1s;
+	animation-name: flipInY;
+	-ms-animation-name: flipInY;
+	-moz-animation-name: flipInY;
+	-webkit-animation-name: flipInY;
+}
+
+#googleLogo {
+	height: 30px;
+	padding: 0 20px 0 0;
+	float: left;
+}
+
+#about {
+	text-align: center;
+}
+
+h1, h2 {
+	font-weight: 100;
+}
+
+h1 {
+	font-size: 60px;
+	margin: 10px 0 0;
+}
+
+h2 {
+	font-size: 16px;
+	margin-bottom: 8px;
+}
+
+h2.url {
+	margin-bottom: 30px;
+}
+
+#aboutClose {
+	background-color: #000;
+	color: #EEE;
+	font-size: 20px;
+	padding: 10px 35px;
+	border-radius: 8px;
+	margin-top: 30px;
+}
+
+/*///////////////////////////////////////////////////////////////////////////////////////////////*/
+
+.itemList {
+	width: 100%;
+	font-family: sans-serif;
+	font-size: 22px;
+	font-weight: 100;
+}
+
+.itemList li {
+	padding: 10px 8px;
+	border-bottom: 1px solid #D8D8D8;
+	cursor: pointer;
+	list-style: none;
+}
+
+.itemList li:last-child {
+	border: none;
+}
+
+.rightside {
+	float: right;
+	padding-left: 15px;
+}
+
+.listItemIcon {
+	display: none;
+	height: 22px;
+	float: left;
+	margin: 1px 15px 0 0;
+}
+
+.itemList .letterSectionHeader {
+	border: none;
+	text-align: center;
+}
+
+/*/////////////////////////////////////////////////////////////////////////////////////////////////
+/* Game UI */
+
+#display {
+	position: fixed;
 	top: 0;
 	left: 50%;
 	line-height: 0;
 	font-size: 0;
 }
 
-canvas#screen {
+#screen {
 	position: relative;
 	margin-left: -50%;
 	background-color: #333;
 }
 
-div.container {
-	position: absolute;
-	box-sizing: border-box;
-	width: 50%;
-	height: 100%;
-}
-
-div#arrowsContainer {
-	left: 0;
-}
-div#buttonsContainer {
-	right: 0;
-	text-align: right;
-}
-
-object.svg {
-	position: relative;
-	max-width: 2.5in;
-	min-width: 133px;
-	max-height: 2.5in;
-	min-height: 133px;
-	opacity: .35;
-}
-
 #overlay {
-	display: none;
+	display: block;
 	position: relative;
 	width: 100%;
 	height: 100%;
 	margin-left: -50%;
 	opacity: .2;
 	
-	transform: translateY(-100%);	/* IT'S NOT PRETTY BUT IT WORKS, DAMMIT */
+	transform: translateY(-100%);
 	-webkit-transform: translateY(-100%);
 	-moz-transform: translateY(-100%);
 	-ms-transform: translateY(-100%);
 }
 
-/*///////////////////////////////////////////////////////////////////////////////////////////////*/
+.container {
+	position: fixed;
+	box-sizing: border-box;
+	width: 50%;
+	height: 100%;
+}
 
-@media (max-aspect-ratio: 160/144) {	/* MUST BE THE SAME AS THE ASPECT RATIO DESCRIBED IN init.js!!! */
+#arrowsContainer {
+	left: 0;
+}
+#buttonsContainer {
+	right: 0;
+	text-align: right;
+}
+
+.controls {
+	position: relative;
+	max-width: 2.5in;
+	min-width: 133px;
+	max-height: 2.5in;
+	min-height: 133px;
+	width: 100%;
+	opacity: .5;
+}
+
+/*///////////////////////////////////////////////////////////////////////////////////////////////*/
+/* Animate.css Resources
+/* Copyright 2013 Dan Eden
+/* Modified by Trey Keown
+/* This section falls under the MIT license. See LICENSE.md for more information */
+
+@keyframes flipInY {
+	0% {
+		transform: translateX(-50%) perspective(400px) rotateY(90deg);
+		opacity: 0; }
+	40% {
+		transform: translateX(-50%) perspective(400px) rotateY(-10deg); }
+	70% {
+		transform: translateX(-50%) perspective(400px) rotateY(10deg); }
+	100% {
+		transform: translateX(-50%) perspective(400px) rotateY(0deg);
+		opacity: 1; }}
+@-ms-keyframes flipInY {
+	0% {
+		-ms-transform: translateX(-50%) perspective(400px) rotateY(90deg);
+		opacity: 0; }
+	40% {
+		-ms-transform: translateX(-50%) perspective(400px) rotateY(-10deg); }
+	70% {
+		-ms-transform: translateX(-50%) perspective(400px) rotateY(10deg); }
+	100% {
+		-ms-transform: translateX(-50%) perspective(400px) rotateY(0deg);
+		opacity: 1; }}
+@-moz-keyframes flipInY {
+	0% {
+		-moz-transform: translateX(-50%) perspective(400px) rotateY(90deg);
+		opacity: 0; }
+	40% {
+		-moz-transform: translateX(-50%) perspective(400px) rotateY(-10deg); }
+	70% {
+		-moz-transform: translateX(-50%) perspective(400px) rotateY(10deg); }
+	100% {
+		-moz-transform: translateX(-50%) perspective(400px) rotateY(0deg);
+		opacity: 1; }}
+@-webkit-keyframes flipInY {
+	0% {
+		-webkit-transform: translateX(-50%) perspective(400px) rotateY(90deg);
+		opacity: 0; }
+	40% {
+		-webkit-transform: translateX(-50%) perspective(400px) rotateY(-10deg); }
+	70% {
+		-webkit-transform: translateX(-50%) perspective(400px) rotateY(10deg); }
+	100% {
+		-webkit-transform: translateX(-50%) perspective(400px) rotateY(0deg);
+		opacity: 1; }}
+
+.flipInY {
+	animation-duration: 1s;
+	-ms-animation-duration: 1s;
+	-moz-animation-duration: 1s;
+	-webkit-animation-duration: 1s;
+	animation-name: flipInY;
+	-ms-animation-name: flipInY;
+	-moz-animation-name: flipInY;
+	-webkit-animation-name: flipInY;
+}
+
+/* End Animate.css section */
+/*/////////////////////////////////////////////////////////////////////////////////////////////////
+/* Responsive Game Controls */
+
+@media (max-aspect-ratio: 160/144) {
 	
-	div.container {
+	.container {
 		top: 100%;
 	}
 	
-	div#arrowsContainer {
+	#arrowsContainer {
 		padding: 0 15px 0 2px;
 	}
 	
-	div#buttonsContainer {
+	#buttonsContainer {
 		padding: 0 2px 0 15px;
 	}
 	
-	object.svg {
-		width: 100%;
-		
+	.controls {
 		transform: translateY(-100%);
 		-webkit-transform: translateY(-100%);
 		-moz-transform: translateY(-100%);
@@ -93,24 +465,21 @@ object.svg {
 	
 }
 
-/*///////////////////////////////////////////////////////////////////////////////////////////////*/
-
-@media (min-aspect-ratio: 160/144) {	/* MUST BE THE SAME AS THE ASPECT RATIO DESCRIBED IN init.js!!! */
+@media (min-aspect-ratio: 160/144) {
 	
-	div.container {
+	.container {
 		top: 50%;
 	}
 	
-	div#arrowsContainer {
-		padding: 0 30px 0 10px;
+	#arrowsContainer {
+		padding: 0 80px 0 10px;
 	}
 	
-	div#buttonsContainer {
-		padding: 0 10px 0 30px;
+	#buttonsContainer {
+		padding: 0 10px 0 80px;
 	}
 	
-	object.svg {
-		width: 100%;
+	.controls {
 		max-height: 65%;
 		
 		transform: translateY(-50%);

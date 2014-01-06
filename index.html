@@ -1,50 +1,104 @@
 <!DOCTYPE html>
 <html>
 	<head>
-		<title>JS GBC</title>
-		<meta name="viewport" content="initial-scale=1, user-scalable=no, maximum-scale=1.0, minimum-scale=1.0">
-		
-		<link rel="apple-touch-icon-precomposed" type="image/png" 					href="./resources/jsgbc-57.png">
-		<link rel="apple-touch-icon-precomposed" type="image/png" sizes="72x72" 	href="./resources/jsgbc-72.png">
-		<link rel="apple-touch-icon-precomposed" type="image/png" sizes="114x114" 	href="./resources/jsgbc-114.png">
-		<link rel="apple-touch-icon-precomposed" type="image/png" sizes="144x144" 	href="./resources/jsgbc-144.png">
-		
-		<link href="./resources/jsgbc-32.png" rel="shortcut icon" type="image/png"/>
-		<link href="./resources/jsgbc-16-32.ico" rel="shortcut icon" type="image/x-icon"/>
-		<meta itemprop="image" content="./resources/jsgbc-128.png">
+		<title>RGB</title>
+		<meta name="viewport" content="initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0, user-scalable=no, width=device-width, minimal-ui">
 		
 		<link rel="stylesheet" type="text/css" href="./resources/style.css">
 		
-		<script src="http://ajax.googleapis.com/ajax/libs/jquery/1.8.3/jquery.min.js"></script>
+		<script src="//ajax.googleapis.com/ajax/libs/jquery/1.8.3/jquery.min.js"></script>
+		<script src="//cdnjs.cloudflare.com/ajax/libs/dropbox.js/0.9.2/dropbox.min.js"></script>
 		
-		<script src="./scripts/jquery.svg.min.js"></script>
-		<script src="./scripts/jquery.svgdom.min.js"></script>
+		<script src="./scripts/libraries/jquery.svg.min.js"></script>
+		<script src="./scripts/libraries/jquery.svgdom.min.js"></script>
+		<script src="./scripts/libraries/jquery.tap.min.js"></script>
 		
-		<script src="./scripts/jsgbc/jsgbc.core.js"></script>
-		<script src="./scripts/jsgbc/jsgbc.io.js"></script>
+		<script src="./scripts/gameboy-online/core.js"></script>
+		<script src="./scripts/gameboy-online/io.js"></script>
 		
-		<script src="./scripts/jsgbc/dependencies/gui.js"></script>
-		<script src="./scripts/jsgbc/dependencies/base64.js"></script>
-		<script src="./scripts/jsgbc/dependencies/transportHandler.js"></script>
-		<script src="./scripts/jsgbc/dependencies/json2.js"></script>
-		<script src="./scripts/jsgbc/dependencies/swfobject.js"></script>
-		<script src="./scripts/jsgbc/dependencies/resampler.js"></script>
-		<script src="./scripts/jsgbc/dependencies/XAudioServer.js"></script>
-		<script src="./scripts/jsgbc/dependencies/resize.js"></script>
+		<script src="./scripts/gameboy-online/dependencies/localStorage.js"></script>
+		<script src="./scripts/gameboy-online/dependencies/rawinflate.js"></script>
+		<script src="./scripts/gameboy-online/dependencies/resampler.js"></script>
 		
-		<script src="./scripts/sizer.js"></script>
-		<script src="./scripts/hideaddr.js"></script>
-		<script src="./scripts/init.js"></script>
+		<script src="./scripts/rgb/config.js"></script>
+		<script src="./scripts/rgb/main.js"></script>
+		<script src="./scripts/rgb/sizer.js"></script>
+		<script src="./scripts/rgb/dropbox.js"></script>
+		<script src="./scripts/rgb/rgbmode.js"></script>
 	</head>
 	<body>
-		<div id="display">
-			<canvas id="screen"></canvas>
+		<div id="game">
+			<div id="display">
+				<canvas id="screen"></canvas><br>
+				<img id="overlay" src="./resources/overlays/overlay-type4.png" alt="">
+			</div>
+
+			<div class="container" id="arrowsContainer">
+				<object class="controls" type="image/svg+xml" id="arrows" data="./resources/joypad.svg"></object>
+			</div>
+
+			<div class="container" id="buttonsContainer">
+				<object class="controls" type="image/svg+xml" id="buttons" data="./resources/buttons.svg"></object>
+			</div>
 		</div>
-		<div class="container" id="arrowsContainer">
-			<object class="svg" type="image/svg+xml" id="arrows" data="./resources/joypad.svg"></object>
-		</div>
-		<div class="container" id="buttonsContainer">
-			<object class="svg" type="image/svg+xml" id="buttons" data="./resources/buttons.svg"></object>
+
+		<div id="front" class="render show fastSlide">
+			<div id="modes">
+				<img id="loading" class="fastFade render show" src="./resources/loading.gif" alt="...">
+				
+				<button id="connectButton">
+					<img id="googleLogo" src="./resources/google.svg" alt="g">Connect
+				</button>
+
+				<div id="about" class="fastFade">
+					<h1>RGB</h1>
+					<h2 class="url"><a href="https://github.com/jfktrey/rgb-emulator">https://github.com/jfktrey/rgb-emulator</a></h2>
+					<h2>Interface by <a href="http://treykeown.com/">Trey Keown</a></h2>
+					<h2>Emulation adapted from Grant Galitz's <a href="https://github.com/grantgalitz/GameBoy-Online">Gameboy-Online</a> project</h2>
+				</div>
+			
+				<div id="loadGame" class="fastFade">
+					<ul id="gameList" class="itemList"></ul>
+				</div>
+			
+				<div id="addGame" class="itemList fastFade">
+					<ul id="gameList class="itemList""></ul>
+				</div>
+			
+				<div id="removeGame" class="itemList fastFade">
+					<ul id="gameList" class="itemList"></ul>
+				</div>
+			
+				<div id="mainMenu" class="fastFade">
+					<ul class="itemList">
+						<li id="mmLoadGame"><img class="listItemIcon" src="./resources/iconmonstr/play.svg">Load Game</li>
+						<li id="mmAddGame"><img class="listItemIcon" src="./resources/iconmonstr/plus.svg">Add Game</li>
+						<li id="mmRemoveGame"><img class="listItemIcon" src="./resources/iconmonstr/minus.svg">Remove Game</li>
+						<li id="mmManageSaves"><img class="listItemIcon" src="./resources/iconmonstr/floppy.svg">Manage Saves</li>
+						<li id="mmGameSettings"><img class="listItemIcon" src="./resources/iconmonstr/gear.svg">Game Settings</li>
+						<li id="mmAbout"><img class="listItemIcon" src="./resources/iconmonstr/info.svg">About</li>
+					</ul>
+				</div>
+			</div>
+
+			<div id="title">
+				<img id="logo" src="./resources/rgb.svg" alt="rgb">
+				<button id="menuButton">
+					<object data="./resources/menu.svg"></object>
+				</button>
+			</div>
+
+			<div id="context">
+				<span id="spacer">&nbsp;</span>
+				<span id="connectHint">Connect with Google Drive</span>
+				<span id="mainMenuHint">Main Menu</span>
+				<span id="loadGameHint">Load Game</span>
+				<span id="addGameHint">Add Game</span>
+				<span id="removeGameHint">Remove Game</span>
+				<span id="manageSavesHint">Manage Saves</span>
+				<span id="gameSettingsHint">Game Settings</span>
+				<span id="aboutHint">About RGB</span>
+			</div>
 		</div>
 	</body>
 </html>

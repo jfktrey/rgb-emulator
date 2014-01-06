@@ -1,25 +1,24 @@
-JS GBC
+RGB
 =================
 
 About
 -----------------
 
-JS GBC is a project that aims to bring GameBoy Color emulation capabilites to any browser which supports modern web standards. Mobile devices are the top priority right now, with iOS being the main testing platform. 
+RGB is a web-based Gameboy Color emulator for touch-based devices that aims to be a replacement for native applications. When completed, it will integrate with your Google account, loading ROMs and settings from Google Drive. RGB itself will also be stored on a user's Google Drive account, allowing for a decentralized web application that doesn't cost any money to host.
 
-This project is based on Grant Galitz's fantastic [GameBoy-Online emulator](https://github.com/grantgalitz/GameBoy-Online). It has been modified and optimized to run on mobile devices.
+RGB is heavily based on Grant Galitz's fantastic [GameBoy-Online emulator](https://github.com/grantgalitz/GameBoy-Online), retooling it to work with mobile, touch-based browsers.
 
 Scope
 -----------------
 
-Currently, the only device which is officially supported is the iPhone 5 using iOS 6. Official support is planned to next spread to iOS devices based on their hardware capabilities and iOS version. The devices which should be officially supported next are:
+Currently, the only devices which are officially supported are the iPhones - specifically, the iPhone 5 and iPhone 5S, both requiring iOS 7. Official support is unlikely to come to older iPhones. iPads and Android-based devices are currently unsupported, though support is likely to come to devices with specifications comparable to the iPhone 5 and up. Chrome is the targeted browser for Android devices.
 
-*   iPad (4th & 3rd gen)
-*   iPhone 4S, iPad (2nd gen), iPad Mini, iPod Touch (5th gen)
+Status
+-----------------
 
-Android devices are an unknown. When running JS GBC on Android devices, be sure to use Chrome instead of the stock browser (performance is much better). I would greatly apppreciate any reports of how this runs, especially on the more powerful Android devices.
+RGB is not ready for general use yet. Many features work, but many core ones have not been implemented yet. Most notably, RGB still uses Dropbox instead of Google Drive for a cloud-based storage platform, despite what the "Connect" button implies. To test out RGB right now, one needs to manually add ROMs to the folder it creates in Dropbox. This will change soon via the ability to add ROMs to Google Drive through a web-based interface that uses MEGA's API to access ROM files.
 
 License
 -----------------
 
-This program is free software; you can redistribute it and/or modify it under the terms of the GNU General Public License version 2 as published by the Free Software Foundation. The full license is available at http://www.gnu.org/licenses/gpl.html
-This program is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License for more details.
+See LICENSE.md
