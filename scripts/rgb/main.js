@@ -89,27 +89,50 @@ $(window).load(function () {
 		}
 	})(jQuery);
 
+	// Loading same-domain scripts using $.getScript() can cause errors to not show.
+	// Patch getScript so that it uses the script element injection method, which it normally uses for cross-domain requests.
+	// This way, errors show up. (see on stackoverflow: http://stackoverflow.com/a/691661/433380 )
+	jQuery.extend({
+		getScript: function(url, callback) {
+			var head = document.getElementsByTagName("head")[0];
+			var script = document.createElement("script");
+			script.src = url;
+			var done = false;
+			// Attach handlers for all browsers
+			script.onload = script.onreadystatechange = function () {
+				if (!done && (!this.readyState || this.readyState == "loaded" || this.readyState == "complete")) {
+					done = true;
+					if (callback) callback();
+						script.onload = script.onreadystatechange = null; 		// Handle memory leak in IE
+				}
+			};
+	
+			head.appendChild(script);
+			return undefined; 			// We handle everything using the script element injection
+		},
+	});
+
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 //OTHER FUNCTIONS/////////////////////////////////////////////////////////////////////////////////////////////////////
 	
 	// The guts of how the touch-based controls work
-	function attachTouchEvents (jQueryClickmask, button) {
+	function attachTouchEvents (jQueryClickmask) {
 		$(config.controls.bothSideSelector).documents().preventUIActions();
 
 		jQueryClickmask
 			.on('touchstart', function (event) {
 				event.preventDefault();
 				GameBoyKeyUp(this.ownerDocument.currentButton);
-				this.ownerDocument.currentButton		= $(this).attr('id');
+				this.ownerDocument.currentButton = $(this).data('keycode');
 				GameBoyKeyDown(this.ownerDocument.currentButton);
 			}).on('touchmove', function (event) {		// The way this works right now, you can't press A and B at the same time (or any two buttons on the same SVG document). Not sure if problem.
 				event.preventDefault();
 				
 				var svgDocument		= this.ownerDocument;
 				var mostRecentTouch	= event.originalEvent.touches[event.originalEvent.touches.length - 1];
-				var overButton		= $(svgDocument.elementFromPoint(mostRecentTouch.clientX, mostRecentTouch.clientY)).attr('id');
+				var overButton		= $(svgDocument.elementFromPoint(mostRecentTouch.clientX, mostRecentTouch.clientY)).data('keycode');
 				
-				if ((svgDocument.currentButton !== overButton) && (overButton !== 'glide')) {
+				if ((svgDocument.currentButton !== overButton) && (overButton !== config.controls.glideKeycode)) {
 					GameBoyKeyUp(svgDocument.currentButton);
 					
 					svgDocument.currentButton = overButton;
@@ -125,7 +148,7 @@ $(window).load(function () {
 		jQueryClickmask
 			.on('mousedown', function(event) {
 				event.preventDefault();
-				this.ownerDocument.currentButton = $(this).attr('id');
+				this.ownerDocument.currentButton = $(this).data('keycode');
 				GameBoyKeyDown(this.ownerDocument.currentButton);
 			}).on('mouseup', function () {
 				GameBoyKeyUp(this.ownerDocument.currentButton);
@@ -134,8 +157,8 @@ $(window).load(function () {
 	}
 
 	// Given a reference to an SVG embedded via an <object> and a selector for a clickmask within that svg, return a reference to the clickmask.
-	function buttonMask (SVGSelector, MaskSelector) {
-		return $(MaskSelector, $(SVGSelector).documents()[0])[0];
+	function buttonMask (selectorArray) {
+		return $(selectorArray[1], $(selectorArray[0]).documents()[0])[0];
 	}
 
 	// If smoothing is true, then the canvas will use the browser's default interpolation. If false, it uses faster nearest-neighbor interpolation.
@@ -161,13 +184,13 @@ $(window).load(function () {
 		var toReturn = null;
 
 		try {
-			toReturn = new webkitAudioContext();							//Create a system audio context.
-		}
-		catch (error) {
+			toReturn = new AudioContext();								//Create a system audio context.
+		} catch (error) {
 			try {
-				toReturn = new AudioContext();								//Create a system audio context.
+				toReturn = new webkitAudioContext();					//Create a system audio context.
+			} catch (error) {
+				console.info('We\'re not using web audio.') 			// So if we need to call noteOn() for some other browser that doesn't support web audio, this won't work.
 			}
-			catch (error) {}
 		}
 
 		return toReturn;
@@ -182,7 +205,9 @@ $(window).load(function () {
 			source.buffer = buffer;
 			source.connect(globalAudioContext.destination);
 			source.noteOn(0);
-		} catch (error) {}
+		} catch (error) {
+			// globalAudioContext wasn't created, we're not using web audio.
+		}
 	}
 
 	// Display a button to connect to dropbox if we aren't authenticated already
@@ -284,16 +309,9 @@ $(window).load(function () {
 //BINDINGS////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
 	// Bind all our controller functions
-	[	buttonMask(config.controls.up[0], config.controls.up[1]),
-		buttonMask(config.controls.down[0], config.controls.down[1]),
-		buttonMask(config.controls.left[0], config.controls.left[1]),
-		buttonMask(config.controls.right[0], config.controls.right[1]),
-		buttonMask(config.controls.a[0], config.controls.a[1]),
-		buttonMask(config.controls.b[0], config.controls.b[1]),
-		buttonMask(config.controls.select[0], config.controls.select[1]),
-		buttonMask(config.controls.start[0], config.controls.start[1])
-	].map(function (value, index) {
-		attachTouchEvents($(value)); });
+	$.each(config.controls.bindings, function (unusedIndex, selectorArray) {
+		attachTouchEvents($(buttonMask(selectorArray)));
+	});
 
 	
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -306,6 +324,11 @@ $(window).load(function () {
 		config.debug.rpsCount = true;}
 	if (config.debug.enabled) {
 		$.getScript('./scripts/rgb/debug.js');}
+
+	if (location.href.indexOf('#old') !== -1)  {
+		//Load old code here and use #old to test if a change is for the better
+	}
+
 	
 	// Gives the user a webapp on the home screen instead of a bookmark.
 	// Advantages and disadvantages to this.

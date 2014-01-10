@@ -22,11 +22,10 @@ window.config = {
 		expanderIdSelector:	'hideAddressBar' },		// ID of the element that is expanded so that the address bar can be hidden via scrollTo
 	
 	// Emulator audio settings
+	// NOT CURRENTLY IMPLEMENTED
 	audio:	{
 		enabled: 			true, 	// Currently unused
-		volume:				1,		// settings[3]
-		minimumInterval:	15,		// settings[7]
-		maximumInterval:	50 },	// settings[8]
+		volume:				1 },	// settings[8]
 	
 	// Touch-based controls settings
 	controls: {
@@ -36,14 +35,25 @@ window.config = {
 		bothSideSelector:	'.controls', 	// Selector for both elements of the controller
 		minimumBottomPad:	2, 				// For sizing, the minimum distance between controller elements and the bottom of the screen in portrait orientation
 		clickMaskSelector:	'.clickmask', 	// Clickmasks are the invisible SVG elements that register touch events. Each one should be selected by this selector.
-		up:		['#arrows', '#up'],
-		down:	['#arrows', '#down'],
-		left:	['#arrows', '#left'],
-		right:	['#arrows', '#right'],
-		a:		['#buttons', '#a'],
-		b:		['#buttons', '#b'],
-		select:	['#buttons', '#select'],
-		start:	['#buttons', '#start'] },
+		glideKeycode: 		'glide',
+
+		bindings: {
+			glide: 		['#arrows', '#touch-glide'],
+
+			up:			['#arrows', '#touch-up'],
+			down:		['#arrows', '#touch-down'],
+			left:		['#arrows', '#touch-left'],
+			right:		['#arrows', '#touch-right'],
+	
+			up_right:	['#arrows', '#touch-up-right'],
+			up_left:	['#arrows', '#touch-up-left'],
+			down_right:	['#arrows', '#touch-down-right'],
+			down_left:	['#arrows', '#touch-down-left'],
+	
+			a:			['#buttons', '#touch-a'],
+			b:			['#buttons', '#touch-b'],
+			select:		['#buttons', '#touch-select'],
+			start:		['#buttons', '#touch-start'] }},
 	
 	// Emulator settings
 	core:	{

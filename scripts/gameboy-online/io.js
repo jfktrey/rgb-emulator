@@ -1,22 +1,22 @@
 "use strict";
 var gameboy = null;						//GameBoyCore object.
 var gbRunInterval = null;				//GameBoyCore Timer
-var settings = [						//Some settings.
-	true, 								//Turn on sound.
-	true,								//Boot with boot ROM first?
-	false,								//Give priority to GameBoy mode
-	1,									//Volume level set.
-	true,								//Colorize GB mode?
-	false,								//Disallow typed arrays?
-	4,									//Interval for the emulator loop.
-	15,									//Audio buffer minimum span amount over x interpreter iterations.
-	100,								//Audio buffer maximum span amount over x interpreter iterations.
-	false,								//Override to allow for MBC1 instead of ROM only (compatibility for broken 3rd-party cartridges).
-	false,								//Override MBC RAM disabling and always allow reading and writing to the banks.
-	false,								//Use the GameBoy boot ROM instead of the GameBoy Color boot ROM.
-	false,								//Scale the canvas in JS? Else, let the browser scale the canvas.
-	false,								//Use image smoothing based scaling?
-	300									//Delay until autoSave is called. Max time until save is called is this multiplied by two.
+var settings = [
+	true, 								// 0: Turn on sound.
+	true,								// 1: Boot with boot ROM first?
+	false,								// 2: Give priority to GameBoy mode
+	1,									// 3: Volume level set.
+	true,								// 4: Colorize GB mode?
+	false,								// 5: Disallow typed arrays? 											(should never be true)
+	8,									// 6: Interval for the emulator loop.
+	10,									// 7: Audio buffer minimum span amount over x interpreter iterations.
+	20,									// 8: Audio buffer maximum span amount over x interpreter iterations.
+	false,								// 9: Override to allow for MBC1 instead of ROM only (compatibility for broken 3rd-party cartridges).
+	false,								//10: Override MBC RAM disabling and always allow reading and writing to the banks.
+	false,								//11: Use the GameBoy boot ROM instead of the GameBoy Color boot ROM.
+	false,								//12: Scale the canvas in JS? Else, let the browser scale the canvas. 	(should never be true)
+	false,								//13: Use image smoothing based scaling? 								(if you like your pixels an ugly, blurred mess, set this to true)
+	300									//14: Delay until autoSave is called. Max time until save is called is this multiplied by two.
 ];
 
 var timeoutHandle = 0;
@@ -370,20 +370,28 @@ function GameBoyEmulatorInitialized() {
 function GameBoyEmulatorPlaying() {
 	return ((gameboy.stopEmulator & 2) == 0);
 }
-function GameBoyKeyDown(key) {
-	if (GameBoyEmulatorInitialized() && GameBoyEmulatorPlaying()) {
-		var keycode = matchKey(key);
-		if (keycode >= 0 && keycode < 8) {
-			gameboy.JoyPadEvent(keycode, true);
-		}
+function GameBoyKeyDown(keys) {
+	if (typeof(keys) === 'string') {
+		$.each(keys.split(' '), function (unusedIndex, key) {
+			if (GameBoyEmulatorInitialized() && GameBoyEmulatorPlaying()) {
+				var keycode = matchKey(key);
+				if (keycode >= 0 && keycode < 8) {
+					gameboy.JoyPadEvent(keycode, true);
+				}
+			}
+		});
 	}
 }
-function GameBoyKeyUp(key) {
-	if (GameBoyEmulatorInitialized() && GameBoyEmulatorPlaying()) {
-		var keycode = matchKey(key);
-		if (keycode >= 0 && keycode < 8) {
-			gameboy.JoyPadEvent(keycode, false);
-		}
+function GameBoyKeyUp(keys) {
+	if (typeof(keys) === 'string') {
+		$.each(keys.split(' '), function (unusedIndex, key) {
+			if (GameBoyEmulatorInitialized() && GameBoyEmulatorPlaying()) {
+				var keycode = matchKey(key);
+				if (keycode >= 0 && keycode < 8) {
+					gameboy.JoyPadEvent(keycode, false);
+				}
+			}
+		});
 	}
 }
 function GameBoyGyroSignalHandler(e) {
