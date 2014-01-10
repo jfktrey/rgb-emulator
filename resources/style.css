@@ -187,7 +187,6 @@ button {
 
 #modes > div {
 	position: fixed;
-	padding-bottom: 20px;
 	width: 100%;
 	height: -webkit-calc(100% - 113px);
 	height: calc(100% - 113px);
@@ -270,7 +269,7 @@ h2 {
 	margin-bottom: 8px;
 }
 
-h2.url {
+h2.bottomSpacing {
 	margin-bottom: 30px;
 }
 
