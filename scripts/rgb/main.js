@@ -343,7 +343,7 @@ $(window).load(function () {
 	
 	// Pause our game if the window loses focus
 	// These also fire when an embedded document (such as an SVG embedded via <object>) is clicked
-	// Get around this by setting pointer-events to none if it's purely asthetic, or e.preventDefault() in a 'tap' and/or 'click' event
+	// Get around this by setting pointer-events to none if the SVG is purely asthetic, or e.preventDefault() in a 'tap' and/or 'click' event
 	if (config.behavior.pauseOnBlur) {
 		$(window).blur(function(){
 			pause(true)
@@ -352,6 +352,10 @@ $(window).load(function () {
 			run(true)
 		});
 	}
+
+	// Updates the settings (in io.js) according to what's in config.js (for select values)
+	settings[4] 	= config.screen.gbColored;
+	settings[13] 	= config.screen.smoothing;
 
 	/*if (location.href.indexOf('#old') !== -1)  {
 		//Load old code here and use #old to test if a change is for the better

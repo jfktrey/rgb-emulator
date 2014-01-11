@@ -6,7 +6,7 @@ window.config = {
 	debug:	{
 		enabled:		false,	// Enable debug features (overriden to be true if #debug exists in the URL)
 		remote: 		false, 	// Use Spotneedle?
-		rps: 			false, 	// Show how many iterations of the main emulator loop take place per second (overriden to be true if #rps exists in the URL)
+		rps: 			true , 	// Show how many iterations of the main emulator loop take place per second (overriden to be true if #rps exists in the URL)
 		saves: 			true }, // Show how many saves have taken place via autosave
 	
 	// Emulator display settings
@@ -20,12 +20,6 @@ window.config = {
 		tryScrollToZero: 	true, 		// Try to hide URL bar via scrollTo(0,0)
 		useExpander: 		false, 		// The expander to scroll past the URL bar is causing issues with the layout, so it's disabled for now.
 		expanderIdSelector:	'hideAddressBar' },		// ID of the element that is expanded so that the address bar can be hidden via scrollTo
-	
-	// Emulator audio settings
-	// NOT CURRENTLY IMPLEMENTED
-	audio:	{
-		enabled: 			true, 	// Currently unused
-		volume:				1 },	// settings[8]
 	
 	// Touch-based controls settings
 	controls: {
@@ -54,22 +48,13 @@ window.config = {
 			b:			['#buttons', '#touch-b'],
 			select:		['#buttons', '#touch-select'],
 			start:		['#buttons', '#touch-start'] }},
-	
-	// Emulator settings
-	core:	{
-		loopInterval:				4,		// settings[6]
-		bootROMFirst:				true,	// settings[1]
-		useGBBootROM:				false,	// settings[11]
-		gbModePriority:				false,	// settings[2]
-		compatibilityFix:			false,	// settings[9]
-		overrideMBCRAMLock:			false,	// settings[10]
-		sramAutosave:				true },	// Autosave implemented for mobile device use
 
 	// How should we present ourself to the user?
 	behavior: 	{
 		pauseOnBlur: 	true, 			// Pause the game when the window no longer has focus.
 		newWindowLinks: true, 			// Open all links in a new window?
-		webAppCapable: 	true }, 		// Do we want to let them put this on their homescreen?
+		webAppCapable: 	true, 			// Do we want to let them put this on their homescreen?
+		audioEnabled: 	true }, 		// Currently unused
 
 	// Dropbox-specific selectors and settings
 	dropbox: {

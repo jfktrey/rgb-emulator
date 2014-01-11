@@ -18,7 +18,7 @@ body {
 	font-family: sans-serif;
 }
 
-button {
+button.clean {
 	border: none;
 	background: none;
 	margin: 0;
