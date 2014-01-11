@@ -302,7 +302,7 @@ $(window).load(function () {
 
 	// Initialize dropbox and set everything up via the callback to dropboxStateHandler
 	window.dropbox = new rgbDropbox(dropboxStateHandler, dropboxAuthErrorHandler);
-	attachDropboxAuth(config.dropbox.connectButtonEventSelector);
+	attachDropboxAuth(config.dropbox.connectButtonSelector);
 
 	
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -319,16 +319,18 @@ $(window).load(function () {
 	
 	// Check for debug hashes and load if enabled
 	if (location.href.indexOf('#debug') !== -1) {
-		config.debug.enabled = true;}
-	if (location.href.indexOf('#rps') !== -1) {
-		config.debug.rpsCount = true;}
-	if (config.debug.enabled) {
-		$.getScript('./scripts/rgb/debug.js');}
-
-	if (location.href.indexOf('#old') !== -1)  {
-		//Load old code here and use #old to test if a change is for the better
+		config.debug.enabled = true;
+		for (var debugOption in config.debug) {
+			if (debugOption === 'enabled') {
+				continue;
+			} else if (location.href.indexOf('#' + debugOption) !== -1) {
+				config.debug[debugOption] = true;
+			}
+		}
 	}
 
+	if (config.debug.enabled) {
+		$.getScript('./scripts/rgb/debug.js'); }
 	
 	// Gives the user a webapp on the home screen instead of a bookmark.
 	// Advantages and disadvantages to this.
@@ -350,5 +352,9 @@ $(window).load(function () {
 			run(true)
 		});
 	}
+
+	/*if (location.href.indexOf('#old') !== -1)  {
+		//Load old code here and use #old to test if a change is for the better
+	} //*/
 
 });

@@ -2,11 +2,11 @@
 
 (function () {
 	// Set up the runs per second counter
-	if (config.debug.rpsCount) {
+	if (config.debug.rps) {
 		var runFunctionBody = GameBoyCore.prototype.run.toString();
 		runFunctionBody = runFunctionBody.slice(runFunctionBody.indexOf("{") + 1, runFunctionBody.lastIndexOf("}")); 	// Gives us all the code inside the GameBoyCore.prototype.run function, and only the code inside it.
 
-		$('body').append('<div id="rps" style="position:fixed;bottom:0;right:0;color:#0FF;">0</div>');
+		$('body').append('<div id="rps">0</div>');
 		window.RPScount = 1;
 		window.RPSlast = Date.now();
 		window.RPSsmooth = [];			//Accumulate runs here until we display their average (once every 75 iterations)
@@ -14,6 +14,7 @@
 		window.RPSaverage = 0;
 		window.RPSnew = 0;
 		window.RPSnode = document.getElementById('rps');
+		window.RPStext = RPSnode.firstChild;
 
 		GameBoyCore.prototype.run = new Function(
 			'var now = Date.now();' +
@@ -22,15 +23,15 @@
 			'	RPSlogged.push(' +						// Store all RPS in a variable called log
 			'		RPSnew = 1000 / (RPSsmooth.reduce(function (a,b) { return a + b }) / 75));' + 	// The "[Sum of RPS collected since last update] / 75" in the above comment
 			'	RPSsmooth = [];' +
-			'	RPSnode.firstChild.nodeValue = RPSaverage = (((RPSlogged.length - 1) * RPSaverage) + RPSnew) / RPSlogged.length' +
+			'	RPStext.nodeValue = RPSaverage = (((RPSlogged.length - 1) * RPSaverage) + RPSnew) / RPSlogged.length' +
 			'}' +
 			'RPSlast = now;' + runFunctionBody 			// Prepends our debug script to the GameBoyCore.prototype.run function
 		);
 	}
 
-	if (config.debug.saveCount) {
+	if (config.debug.saves) {
 		// Set up the Save counter
-		$('body').append('<div id="saveCount" style="position:fixed;bottom:0;left:0;color:#FF0;">0</div>');
+		$('body').append('<div id="saveCount">0</div>');
 		window.saveCount = 0;
 		document.getElementById('saveCount').innerHTML = saveCount;
 

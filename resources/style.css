@@ -188,8 +188,9 @@ button {
 #modes > div {
 	position: fixed;
 	width: 100%;
-	height: -webkit-calc(100% - 113px);
 	height: calc(100% - 113px);
+	height: -webkit-calc(100% - 113px);
+	padding-bottom: 10px;
 	box-sizing: border-box;
 	overflow-y: scroll;
 	-webkit-overflow-scrolling: touch;
@@ -232,6 +233,10 @@ button {
 	-ms-transform: translateX(-50%);
 	-moz-transform: translateX(-50%);
 	-webkit-transform: translateX(-50%);
+
+	transition: opacity 0.2s linear;
+	-moz-transition: opacity 0.2s linear;
+	-webkit-transition: opacity 0.2s linear;
 }
 
 #connectButton.show {
@@ -243,6 +248,10 @@ button {
 	-ms-animation-name: flipInY;
 	-moz-animation-name: flipInY;
 	-webkit-animation-name: flipInY;
+
+	transition: none;
+	-moz-transition: none;
+	-webkit-transition: none;
 }
 
 #googleLogo {
@@ -373,6 +382,46 @@ h2.bottomSpacing {
 	min-height: 133px;
 	width: 100%;
 	opacity: .5;
+}
+
+/*/////////////////////////////////////////////////////////////////////////////////////////////////
+/* Debugging Interface */
+
+#saveCount {
+	position: fixed;
+	bottom: 0;
+	left: 0;
+	color: #FF0;
+	padding: 0px 2px;
+	height: 30px;
+	background-color: #000;
+	white-space: pre;
+	line-height: 0.8em;
+}
+
+#saveCount:before {
+	content: '# of saves:\A';
+	font-size: 9px;
+	color: #FF0;
+}
+
+#rps {
+	position: fixed;
+	bottom: 0;
+	right: 0;
+	color: #0FF;
+	height: 30px;
+	background-color: #000;
+	white-space: pre;
+	line-height: 0.8em;
+	text-align: right;
+}
+
+#rps:before {
+	content: 'avg rps:\A';
+	font-size: 9px;
+	color: #0FF;
+	padding: 0px 2px;
 }
 
 /*///////////////////////////////////////////////////////////////////////////////////////////////*/
