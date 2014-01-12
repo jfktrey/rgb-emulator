@@ -6,6 +6,7 @@ function rgbMode (modalConfig) {
 	this.classes = modalConfig.classes;
 	this.current = modalConfig.current;
 	this.selectors = modalConfig.selectors;
+	this.lastOut = '';
 
 	$(this.menu.buttonSelector).on('tap', (function(rgbModeReference){
 		return function(){ rgbModeReference.menuButton() }
@@ -46,6 +47,7 @@ rgbMode.prototype.in = function (selector, animation) {
 // If animation is a string, that is used as a class to add to the element to animate it in.
 rgbMode.prototype.out = function (selector, animation) {
 	var transitionDuration, animationDuration, timeoutWait, elements = $(selector);
+	this.lastOut = selector;
 
 	if (typeof(animation) == 'string') {
 		elements.addClass(this.classes.noTransition);
@@ -66,6 +68,12 @@ rgbMode.prototype.out = function (selector, animation) {
 					$(this).removeClass(classes.render).removeClass(classes.noTransition).off('transitionend msTransitionEnd webkitTransitionEnd');
 				};
 			})(this.classes));
+
+			elements.each((function (_this) { return function () {
+				if ($(this).css('transition-duration') === '0s') {
+					$(this).removeClass(_this.classes.render); 			// Remove elements without transitions from the render tree
+				}
+			}})(this));
 		} else {
 			elements.removeClass(this.classes.render);
 			elements.removeClass(this.classes.noTransition);
@@ -95,9 +103,15 @@ rgbMode.prototype.setMenuButtonAppearance = function (makeActive) {
 	}
 }
 
+// Checks to see whether any elements that are changing have unresolved class changes
+rgbMode.prototype.currentlyChanging = function () {
+	if ($(this.lastOut).hasClass(this.classes.render)) return true;
+	return false;
+}
+
 // Swaps the currently displayed modal
 rgbMode.prototype.choose = function (newModal) {
-	if (newModal !== this.current) {
+	if ((newModal !== this.current) && (!this.currentlyChanging())) {
 		if (newModal === this.selectors[this.menu.modalName]) this.setMenuButtonAppearance(true);
 		if (this.current === this.selectors[this.menu.modalName]) this.setMenuButtonAppearance(false);
 		this.in(newModal, true);
