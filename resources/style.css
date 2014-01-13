@@ -100,6 +100,7 @@ button.clean {
 	width: 100%;
 	padding: 15px;
 	box-sizing: border-box;
+	-moz-box-sizing: border-box;
 	background: #000000;
 	text-align: center;
 }
@@ -117,6 +118,7 @@ button.clean {
 	top: 74px;
 	left: 0;
 	box-sizing: border-box;
+	-moz-box-sizing: border-box;
 }
 
 #context span {
@@ -170,6 +172,7 @@ button.clean {
 	height: 100%;
 	padding-top: 113px;
 	box-sizing: border-box;
+	-moz-box-sizing: border-box;
 
 	transform: translateX(-50%);
 	-ms-transform: translateX(-50%);
@@ -192,6 +195,7 @@ button.clean {
 	height: -webkit-calc(100% - 113px);
 	padding-bottom: 10px;
 	box-sizing: border-box;
+	-moz-box-sizing: border-box;
 	overflow-y: scroll;
 	-webkit-overflow-scrolling: touch;
 }
@@ -362,6 +366,7 @@ h2.bottomSpacing {
 .container {
 	position: fixed;
 	box-sizing: border-box;
+	-moz-box-sizing: border-box;
 	width: 50%;
 	height: 100%;
 }
