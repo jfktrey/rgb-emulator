@@ -46,46 +46,45 @@ rgbMode.prototype.in = function (selector, animation) {
 // If animation is true, element enters using transition
 // If animation is false, element appears immediately
 // If animation is a string, that is used as a class to add to the element to animate it in.
-// AUTOMATIC REMOVAL WILL BREAK IF TIME IS NOT MEASURED IN SECONDS!
 rgbMode.prototype.out = function (selector, animation) {
-	var transitionDuration, animationDuration, timeoutWait, elements = $(selector);
+	var transitionDuration, animationDuration, timeoutWait,
+		elements = $(selector),
+		classesReference = this.classes;
 	this.lastOut = selector;
-	var classesReference = this.classes;
 
 	if (typeof(animation) == 'string') {
 		elements.addClass(classesReference.noTransition);
 		elements.addClass(animation);
+		elements.addClass(classesReference.animating);
 
 		elements.on('animationend', (function(classes){
 			return function(e){
-				$(this).hide().removeClass(classes.noTransition).off('animationend');
+				$(this).find("." + classesReference.animating).trigger("animationend");		// Stop children that are still animating and wrap up
+				$(this).hide().removeClass(classes.noTransition).removeClass(classesReference.animating).off('animationend');
 			};
 		})(classesReference));
 	} else {
+		if (!elements.is(':visible')) animation = false;		// display:none elements won't necessarily have transitionend triggered
 		if (animation === false) elements.addClass(classesReference.noTransition);
 		elements.removeClass(classesReference.show);
 
 		if (animation) {
-			elements.on('transitionend msTransitionEnd webkitTransitionEnd', (function(classes, randID){
+			elements.addClass(classesReference.animating);
+
+			// Hook in to transitionend to remove the elements via display:none when the animation is done
+			elements.on('transitionend', (function(classes){
 				return function(e){
-					$(this).hide().removeClass(classes.noTransition).off('transitionend msTransitionEnd webkitTransitionEnd');
+					$(this).find("." + classesReference.animating).trigger("transitionend");		// Stop children that are still animating and wrap up
+					$(this).hide().removeClass(classes.noTransition).removeClass(classesReference.animating).off('transitionend');
 				};
 			})(classesReference));
 
+			// Remove elements without transitions from the render tree
 			elements.each(function () {
-				if ($(this).css('transition-duration') === '0s') {
-					$(this).hide(); 			// Remove elements without transitions from the render tree
-				} else {
-					setTimeout((function (that, classesClosure) {
-						return function () {
-							if ($(that).css("display") != "none") {
-								$(that).hide().removeClass(classesClosure.noTransition).off('transitionend msTransitionEnd webkitTransitionEnd');
-							}
-						};
-					})(this, classesReference), parseInt(1.25 * 1000 * parseFloat($(this).css('transition-duration'))));
-				}
+				if ($(this).css('transition-duration') === '0s') $(this).hide();
 			});
 		} else {
+			// Immediately hide elements, we don't want to use animation
 			elements.hide();
 			elements.removeClass(classesReference.noTransition);
 		}

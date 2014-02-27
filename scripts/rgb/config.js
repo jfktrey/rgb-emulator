@@ -86,7 +86,8 @@ window.config = {
 		classes: {
 			noTransition: 	'noTransition', 	// Disables all CSS transitions on an element temporarily
 			show: 			'show', 			// Show an element (via visibility:visible) that's already in the render tree, but isn't visible
-			render: 		'render' }, 		// Add this element to the render tree (via display:block)
+			render: 		'render', 			// Add this element to the render tree (via .show())
+			animating:	'animating' },			// For keeping track of elements that are animating
 
 		// The section of the UI, and the triggers that activate it (when tapped)
 		triggers: {
