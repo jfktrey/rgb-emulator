@@ -6,8 +6,9 @@ window.config = {
 	debug:	{
 		enabled:		false,	// Enable debug features (overriden to be true if #debug exists in the URL)
 		remote: 		false, 	// Use Spotneedle?
-		rps: 			true , 	// Show how many iterations of the main emulator loop take place per second (overriden to be true if #rps exists in the URL)
-		saves: 			true }, // Show how many saves have taken place via autosave
+		domlog: 		false, 	// Patch console.log, console.warn, and console.error to place output in DOM as well as console?
+		rps: 			false, 	// Show how many iterations of the main emulator loop take place per second (overriden to be true if #rps exists in the URL)
+		saves: 			false}, // Show how many saves have taken place via autosave
 	
 	// Emulator display settings
 	screen: {
@@ -17,9 +18,20 @@ window.config = {
 		gbColored:			true,		// settings[4]
 		nativeWidth:		160, 		// Width of a real GBC screen, pixels. Should never change this.
 		nativeHeight:		144, 		// Height of a real GBC screen, pixels. Should never change this.
+
 		tryScrollToZero: 	true, 		// Try to hide URL bar via scrollTo(0,0)
 		useExpander: 		false, 		// The expander to scroll past the URL bar is causing issues with the layout, so it's disabled for now.
 		expanderIdSelector:	'hideAddressBar' },		// ID of the element that is expanded so that the address bar can be hidden via scrollTo
+
+	// Settings for game screen that don't fall under other categories
+	game: {
+		wrapperSelector:		"#game",
+		menuSelector:			"#gameMenuWrapper",
+		menuCloseSelector:		"#gameMenuClose",
+		resetSelector:			"#gmResetGame",
+		quitSelector:			"#gmQuitGame",
+		preventUIActionsFor:	":not(#gameMenu, #gameMenu *)"
+	},
 	
 	// Touch-based controls settings
 	controls: {
@@ -53,7 +65,7 @@ window.config = {
 	behavior: 	{
 		pauseOnBlur: 	true, 			// Pause the game when the window no longer has focus.
 		newWindowLinks: true, 			// Open all links in a new window?
-		webAppCapable: 	true, 			// Do we want to let them put this on their homescreen?
+		webAppCapable: 	false, 			// Do we want to let them put this on their homescreen?
 		audioEnabled: 	true }, 		// Currently unused
 
 	// Dropbox-specific selectors and settings

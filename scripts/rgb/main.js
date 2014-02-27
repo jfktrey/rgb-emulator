@@ -37,7 +37,7 @@ $(window).load(function () {
 					else if ($.browser.mozilla) {
 						vendorValue = '-moz-crisp-edges';}
 					else if ($.browser.msie) {
-						vendorValue		= 'nearest-neighbor';}
+						vendorValue	= 'nearest-neighbor';}
 					else if ($.browser.opera) {
 						vendorValue = '-o-crisp-edges';}
 				}
@@ -48,23 +48,38 @@ $(window).load(function () {
 		}
 	})(jQuery);
 
-	// Prevents touch scrolling and disables selection
+	// Prevents or re-enables touch scrolling and selection
 	(function ($) {
-		$.fn.preventUIActions = function () {
-			$(this).each( function () {
-				$(this)
-					.on('touchstart',	function(event) {
-						event.preventDefault(); })
-					.on('touchmove',	function(event) {
-						event.preventDefault(); })
-					.css({
-						'-webkit-touch-callout':	'none',
-						'-webkit-user-select':		'none',
-						'-moz-user-select':			'none',
-						'-ms-user-select': 			'none',
-						'user-select': 				'none'})
-					.attr('unselectable', 'on');
-			});
+		$.fn.configureUIActions = function (enabled) {
+			if (enabled) {
+				$(this).each( function () {
+					$(this)
+						.off('touchstart')
+						.off('touchmove')
+						.css({
+							'-webkit-touch-callout':	'default',
+							'-webkit-user-select':		'auto',
+							'-moz-user-select':			'text',
+							'-ms-user-select': 			'text',
+							'user-select': 				'text'})
+						.attr('unselectable', 'off');
+				});
+			} else {
+				$(this).each( function () {
+					$(this)
+						.on('touchstart',	function(event) {
+							event.preventDefault(); })
+						.on('touchmove',	function(event) {
+							event.preventDefault(); })
+						.css({
+							'-webkit-touch-callout':	'none',
+							'-webkit-user-select':		'none',
+							'-moz-user-select':			'none',
+							'-ms-user-select': 			'none',
+							'user-select': 				'none'})
+						.attr('unselectable', 'on');
+				});
+			}
 			
 			return $(this);
 		}
@@ -117,7 +132,7 @@ $(window).load(function () {
 	
 	// The guts of how the touch-based controls work
 	function attachTouchEvents (jQueryClickmask) {
-		$(config.controls.bothSideSelector).documents().preventUIActions();
+		$(config.controls.bothSideSelector).documents().configureUIActions(false);
 
 		jQueryClickmask
 			.on('touchstart', function (event) {
@@ -227,7 +242,7 @@ $(window).load(function () {
 				}
 				$('.romFile').on('tap', function (event){
 					unlockAudio();
-					$(document).preventUIActions();
+					$(document).configureUIActions(false);
 					loadRom($(this).data('rom-filename'));
 				})
 				//$(config.dropbox.romListSelector).generateHeading();
@@ -242,6 +257,7 @@ $(window).load(function () {
 		mode.choose(config.modals.selectors.spinner)
 		dropbox.load('/ROMS/'+romName, function(romBuffer){
 			mode.out(config.modals.container, true);
+			mode.choose('', true);
 			start($(config.screen.selector)[0], arrayBufferToString(romBuffer));
 		});
 	}
@@ -270,6 +286,40 @@ $(window).load(function () {
 	// Do more advanced error handling in the future...
 	function dropboxAuthErrorHandler (error) {
 		console.error(error);
+	}
+
+	// Pause our game if the window loses focus
+	// These also fire when an embedded document (such as an SVG embedded via <object>) is clicked
+	// Get around this by setting pointer-events to none if the SVG is purely asthetic, or e.preventDefault() in a 'tap' and/or 'click' event
+	// Also allows us to disable resume functionality while we're in the in-game menu
+	function configurePauseResume (enabled) {
+		if (enabled) {
+			$(window).blur(function(){
+				pause(true)
+			});
+			$(window).focus(function(){
+				run(true)
+			});
+		} else {
+			$(window).off('blur');
+			$(window).off('focus');
+		}
+	}
+
+	function toggleGameMenu (show) {
+		if (show) {
+			pause();
+			$(document).configureUIActions(true);
+			$(config.game.wrapperSelector).addClass("blurred");
+			mode.in(config.game.menuSelector, true);
+			configurePauseResume(false);
+		} else {
+			$(document).configureUIActions(false);
+			$(config.game.wrapperSelector).removeClass("blurred");
+			mode.out(config.game.menuSelector, true);
+			configurePauseResume(true);
+			run();
+		}
 	}
 
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -313,6 +363,26 @@ $(window).load(function () {
 		attachTouchEvents($(buttonMask(selectorArray)));
 	});
 
+	// In-game menu bindings
+	$(config.screen.selector).on("tap", function () {
+		toggleGameMenu(true) });
+	$(config.game.menuCloseSelector).on("tap", function () {
+		toggleGameMenu(false) });
+	$(config.game.resetSelector).on("tap", function () {
+		restart();
+		toggleGameMenu(false);
+	});
+	$(config.game.quitSelector).on("tap", function () {
+		pause();
+		gameboy = null;
+		mode.choose(config.modals.selectors.loadGame);
+		toggleGameMenu(false);
+		mode.in(config.modals.container, true);
+		$(document).configureUIActions(true);
+		var canvas = $(config.screen.selector)[0];
+		canvas.getContext('2d').clearRect(0, 0, canvas.width, canvas.height);
+	})
+
 	
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 //CLOSING CONFIGURATION///////////////////////////////////////////////////////////////////////////////////////////////		
@@ -344,14 +414,7 @@ $(window).load(function () {
 	// Pause our game if the window loses focus
 	// These also fire when an embedded document (such as an SVG embedded via <object>) is clicked
 	// Get around this by setting pointer-events to none if the SVG is purely asthetic, or e.preventDefault() in a 'tap' and/or 'click' event
-	if (config.behavior.pauseOnBlur) {
-		$(window).blur(function(){
-			pause(true)
-		});
-		$(window).focus(function(){
-			run(true)
-		});
-	}
+	configurePauseResume(config.behavior.pauseOnBlur);
 
 	// Updates the settings (in io.js) according to what's in config.js (for select values)
 	settings[4] 	= config.screen.gbColored;

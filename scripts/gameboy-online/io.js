@@ -21,6 +21,7 @@ var settings = [
 
 var timeoutHandle = 0;
 var sigReceivedDuringTimeout = false;
+var lastLoadedRom = null;
 
 function delayedSave () {
 	if (timeoutHandle) {
@@ -44,6 +45,7 @@ function autoSave() {
 function start(canvas, ROM) {
 	clearLastEmulation();
 	autoSave();	//If we are about to load a new game, then save the last one...
+	lastLoadedRom = ROM;
 	gameboy = new GameBoyCore(canvas, ROM);
 	gameboy.openMBC = openSRAM;
 	gameboy.openRTC = openRTC;
@@ -73,6 +75,11 @@ function run(ignoreWarnings) {
 		if (!ignoreWarnings) console.warn("GameBoy core cannot run while it has not been initialized.");
 	}
 }
+
+function restart () {
+	start(gameboy.canvas, lastLoadedRom);
+}
+
 function pause (ignoreWarnings) {
 	if (GameBoyEmulatorInitialized()) {
 		if (GameBoyEmulatorPlaying()) {

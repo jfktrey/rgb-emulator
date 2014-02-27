@@ -7,6 +7,53 @@
 		$.getScript('https://www.spotneedle.com/observed/9a9f1b4b-d6ac-43e1-8d1c-f98905fb6adb'); }
 
 ///////////////////////////////////////////////////////////////////////////////////////////////
+////// Set up spotneedle
+	if (config.debug.domlog) {
+		$(config.modals.selectors.mainMenu).first().children().append('<li id="mmConsole"><img class="listItemIcon" src="./resources/iconmonstr/bug.svg">Debug Messages</li>');
+		$('#mmConsole').click(function(){
+			mode.choose('#debugMessages');
+		});
+
+		$('<div id="debugMessages" class="fastFade"><ul class="itemList"></ul></div>').insertBefore($('#modes > :last-child'));
+
+		var console_log = console.log;
+		var console_info = console.info;
+		var console_warn = console.warn;
+		var console_error = console.error;
+		
+		console.log = function () {
+			console_log.apply(console, arguments);
+			$('#debugMessages').first().children().append('<li class="consoleLog">' + argumentStringify(arguments) + '</li>');
+		}
+		
+		console.warn = function () {
+			console_warn.apply(console, arguments);
+			$('#debugMessages').first().children().append('<li class="consoleWarn">' + argumentStringify(arguments) + '</li>');
+		}
+		
+		console.info = function () {
+			console_info.apply(console, arguments);
+			$('#debugMessages').first().children().append('<li class="consoleInfo">' + argumentStringify(arguments) + '</li>');
+		}
+		
+		console.error = function () {
+			console_error.apply(console, arguments);
+			$('#debugMessages').first().children().append('<li class="consoleError">' + argumentStringify(arguments) + '</li>');
+		}
+
+		argumentStringify = function (args) {
+			strings = [];
+			for (var i = 0; i < args.length; i++) {
+				var parsedArg = JSON.stringify(args[i]);
+				if ((parsedArg[0] === "\"") && (parsedArg[parsedArg.length - 1] === "\"")) {
+					parsedArg = parsedArg.substr(1, parsedArg.length - 2); }
+				strings.push(parsedArg);
+			}
+			return strings.join(', ');
+		}
+	}
+
+///////////////////////////////////////////////////////////////////////////////////////////////
 ////// Set up the runs per second counter
 	if (config.debug.rps) {
 		var runFunctionBody = GameBoyCore.prototype.run.toString();

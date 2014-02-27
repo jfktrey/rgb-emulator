@@ -32,7 +32,9 @@ rgbSizer.prototype.setGameScreenDimensions = function () {
 		height = width = 'auto';
 	}
 	
-	$(config.screen.selector).css('width', width).css('height', height);
+	$(config.screen.selector).css({
+		'width': width,
+		'height': height });
 }
 
 

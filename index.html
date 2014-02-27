@@ -6,11 +6,10 @@
 		
 		<link rel="stylesheet" type="text/css" href="./resources/style.css">
 		
-		<script src="//ajax.googleapis.com/ajax/libs/jquery/1.8.3/jquery.min.js"></script>
-		<script src="//cdnjs.cloudflare.com/ajax/libs/dropbox.js/0.9.2/dropbox.min.js"></script>
-		
-		<script src="./scripts/libraries/jquery.svg.min.js"></script>
-		<script src="./scripts/libraries/jquery.svgdom.min.js"></script>
+		<script src="./scripts/libraries/jquery-2.1.0.min.js"></script>
+		<script src="./scripts/libraries/jquery-migrate-1.2.1.min.js"></script>
+		<script src="./scripts/libraries/dropbox-0.9.2.min.js"></script>
+
 		<script src="./scripts/libraries/jquery.tap.min.js"></script>
 		
 		<script src="./scripts/gameboy-online/core.js"></script>
@@ -42,9 +41,9 @@
 			</div>
 		</div>
 
-		<div id="front" class="render show fastSlide">
+		<div id="front" class="show fastSlide">
 			<div id="modes">
-				<img id="loading" class="fastFade render show" src="./resources/loading.gif" alt="...">
+				<img id="loading" class="fastFade show" src="./resources/loading.gif" alt="...">
 				
 				<button class="clean" id="connectButton">
 					<img id="googleLogo" src="./resources/google.svg" alt="g">Connect
@@ -76,7 +75,7 @@
 						<li id="mmAddGame"><img class="listItemIcon" src="./resources/iconmonstr/plus.svg">Add Game</li>
 						<li id="mmRemoveGame"><img class="listItemIcon" src="./resources/iconmonstr/minus.svg">Remove Game</li>
 						<li id="mmManageSaves"><img class="listItemIcon" src="./resources/iconmonstr/floppy.svg">Manage Saves</li>
-						<li id="mmGameSettings"><img class="listItemIcon" src="./resources/iconmonstr/gear.svg">Game Settings</li>
+						<li id="mmGameSettings"><img class="listItemIcon" src="./resources/iconmonstr/gear.svg">Settings</li>
 						<li id="mmAbout"><img class="listItemIcon" src="./resources/iconmonstr/info.svg">About</li>
 					</ul>
 				</div>
@@ -97,8 +96,27 @@
 				<span id="addGameHint">Add Game</span>
 				<span id="removeGameHint">Remove Game</span>
 				<span id="manageSavesHint">Manage Saves</span>
-				<span id="gameSettingsHint">Game Settings</span>
+				<span id="gameSettingsHint">Settings</span>
 				<span id="aboutHint">About RGB</span>
+			</div>
+		</div>
+
+		<div id="gameMenuWrapper" class="fastFade">
+			<div id="gameMenu" class="gameMenuWidth show">
+				<div id="itemListWrapperWrapper">
+					<div id="itemListWrapper">
+						<ul class="itemList">
+							<li id="gmQuitGame">Quit Game</li>
+							<li id="gmFastForward">Fast Forward</li>
+							<li id="gmSaveState">Save State</li>
+							<li id="gmLoadState">Load State</li>
+							<li id="gmResetGame">Reset Game</li>
+							<li id="gmSettings">Settings</li>
+						</ul>
+					</div>
+				</div>
+				<div id="gameMenuTitle" class="gameMenuWidth">Game Menu</div>
+				<img id="gameMenuClose" src="./resources/iconmonstr/cross.svg">
 			</div>
 		</div>
 	</body>
