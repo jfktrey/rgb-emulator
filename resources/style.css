@@ -188,12 +188,11 @@ button.clean {
 }
 
 #modes > * {
+	display: none;
 	position: fixed;
 }
 
 #modes > div {
-	display: none;
-	position: fixed;
 	width: 100%;
 	height: calc(100% - 113px);
 	height: -webkit-calc(100% - 113px);
@@ -341,7 +340,7 @@ h2.bottomSpacing {
 /* Game UI */
 
 #game {
-	position: fixed;
+	position: absolute;
 	width: 100%;
 	height: 100%;
 	left: 0;
@@ -412,10 +411,12 @@ h2.bottomSpacing {
 	display: none;
 	opacity: 0;
 	background: rgba(0,0,0,0.4);
-	position: fixed;
+	position: absolute;
 	width: 100%;
 	height: 100%;
 	color: black;
+	top: 0;
+	left: 0;
 }
 
 .gameMenuWidth {

@@ -86,8 +86,7 @@ window.config = {
 		classes: {
 			noTransition: 	'noTransition', 	// Disables all CSS transitions on an element temporarily
 			show: 			'show', 			// Show an element (via visibility:visible) that's already in the render tree, but isn't visible
-			render: 		'render', 			// Add this element to the render tree (via .show())
-			animating:	'animating' },			// For keeping track of elements that are animating
+			animating:		'animating' },		// For keeping track of elements that are animating
 
 		// The section of the UI, and the triggers that activate it (when tapped)
 		triggers: {
@@ -100,8 +99,8 @@ window.config = {
 			mainMenu: 	'#mainMenu, #mainMenuHint',
 			loadGame: 	'#loadGame, #loadGameHint',
 			about: 		'#about, #aboutHint',
-			spinner: 	'#loading',
-			connect: 	'#connectButton' },
+			spinner: 	'#loading, #loadingHint',
+			connect: 	'#connectButton, #connectHint' },
 
 		// Special settings for the menu button
 		menu: {
@@ -111,6 +110,7 @@ window.config = {
 			svgFilledElementSelector: 	'path',
 			activeFill: 				'#000000',
 			inactiveFill: 				'#EEEEEE',
-			modalName: 					'mainMenu' }
+			modalName: 					'mainMenu',
+			noShowFor:					'.noMenu'}
 	}
 };

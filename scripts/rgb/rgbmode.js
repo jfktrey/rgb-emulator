@@ -20,75 +20,35 @@ function rgbMode (modalConfig) {
 }
 
 
-// Animates an element in.
-// If animation is true, element enters using transition
-// If animation is false, element appears immediately
-// If animation is a string, that is used as a class to add to the element to animate it in.
-rgbMode.prototype.in = function (selector, animation) {
+// Animates an element in from display:none
+rgbMode.prototype.enter = function (selector) {
 	var elements = $(selector);
 
 	elements.show();
-	if (animation !== false) elements.each(function(){this.offsetHeight});		// Seems useless, right? Nope. It forces the elements to be rendered before the transition takes place. Without this, the element would just appear without any transition.
+	elements.each(function(){this.offsetHeight});		// Seems useless, right? Nope. It forces the elements to be rendered before the transition takes place. Without this, the element would just appear without any transition.
 	elements.addClass(this.classes.show);
-	
-	if (typeof(animation) == 'string') {
-		elements.addClass(this.classes.noTransition);
-		elements.addClass(animation);
-	} else {
-		if (animation === false) elements.addClass(this.classes.noTransition);
-		elements.addClass(this.classes.show);
-		elements.removeClass(this.classes.noTransition);
-	}
 }
 
+// Animates an element out and sets display to none after the transition
+rgbMode.prototype.leave = function (selector) {
+	var elements = $(selector),
+		classes = this.classes;
 
-// Animates an element out and sets display to none after the animation (or transition)
-// If animation is true, element enters using transition
-// If animation is false, element appears immediately
-// If animation is a string, that is used as a class to add to the element to animate it in.
-rgbMode.prototype.out = function (selector, animation) {
-	var transitionDuration, animationDuration, timeoutWait,
-		elements = $(selector),
-		classesReference = this.classes;
 	this.lastOut = selector;
 
-	if (typeof(animation) == 'string') {
-		elements.addClass(classesReference.noTransition);
-		elements.addClass(animation);
-		elements.addClass(classesReference.animating);
-
-		elements.on('animationend', (function(classes){
-			return function(e){
-				$(this).find("." + classesReference.animating).trigger("animationend");		// Stop children that are still animating and wrap up
-				$(this).hide().removeClass(classes.noTransition).removeClass(classesReference.animating).off('animationend');
-			};
-		})(classesReference));
-	} else {
-		if (!elements.is(':visible')) animation = false;		// display:none elements won't necessarily have transitionend triggered
-		if (animation === false) elements.addClass(classesReference.noTransition);
-		elements.removeClass(classesReference.show);
-
-		if (animation) {
-			elements.addClass(classesReference.animating);
-
-			// Hook in to transitionend to remove the elements via display:none when the animation is done
-			elements.on('transitionend', (function(classes){
-				return function(e){
-					$(this).find("." + classesReference.animating).trigger("transitionend");		// Stop children that are still animating and wrap up
-					$(this).hide().removeClass(classes.noTransition).removeClass(classesReference.animating).off('transitionend');
+	elements.each(function () {
+		$(this).removeClass(classes.show).addClass(classes.animating);
+		if ($(this).is(':visible') && ($(this).css('transition-duration') !=='0s')) {
+			$(this).on('transitionend', (function (that, classesClosure) {
+				return function () {
+					$(that).find("." + classesClosure.animating).trigger('transitionend');
+					$(that).hide().removeClass(classesClosure.animating).off('transitionend');
 				};
-			})(classesReference));
-
-			// Remove elements without transitions from the render tree
-			elements.each(function () {
-				if ($(this).css('transition-duration') === '0s') $(this).hide();
-			});
+			})(this, classes));
 		} else {
-			// Immediately hide elements, we don't want to use animation
-			elements.hide();
-			elements.removeClass(classesReference.noTransition);
+			$(this).hide().removeClass(classes.animating);
 		}
-	}
+	});
 }
 
 // Handles the logic for when the menu button is pressed
@@ -116,25 +76,27 @@ rgbMode.prototype.setMenuButtonAppearance = function (makeActive) {
 // Checks to see whether any elements that are changing have unresolved class changes
 rgbMode.prototype.currentlyChanging = function () {
 	if (this.lastOut == '') return false;
-	if ($(this.lastOut).css("display") != "none") return true;
+	if ($(this.lastOut).hasClass(this.classes.animating)) return true;
 	return false;
 }
 
 // Swaps the currently displayed modal
 rgbMode.prototype.choose = function (newModal, retryUntilSuccessful) {
-	var isChanging = this.currentlyChanging();
-	if ((newModal !== this.current) && (!isChanging)) {
-		if (newModal === this.selectors[this.menu.modalName]) this.setMenuButtonAppearance(true);
-		if (this.current === this.selectors[this.menu.modalName]) this.setMenuButtonAppearance(false);
-		this.in(newModal, true);
-		this.out(this.current, true);
-		this.lastOut = this.current;
+	if ((newModal !== this.current) && !this.currentlyChanging()) {
+		if (newModal === this.selectors[this.menu.modalName]) {
+			this.setMenuButtonAppearance(true);
+		} else if (this.current === this.selectors[this.menu.modalName]) {
+			this.setMenuButtonAppearance(false);
+		}
+
+		if ($(newModal).is(this.menu.noShowFor)) {
+			this.leave(this.menu.buttonSelector);
+		} else if (!$(this.menu.buttonSelector).is(':visible')) {
+			this.enter(this.menu.buttonSelector);
+		}
+
+		this.enter(newModal);
+		this.leave(this.current);
 		this.current = newModal;
-	} else if (isChanging && retryUntilSuccessful) {
-		window.setTimeout((function (that, newModalClosure) {
-			return function () {
-				that.choose(newModalClosure, true);
-			}
-		})(this, newModal), 1000);
 	}
 }

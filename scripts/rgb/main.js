@@ -231,7 +231,7 @@ $(window).load(function () {
 		if (!isAuthenticated) {
 			mode.choose(config.modals.selectors.connect);
 		} else {
-			mode.in(config.modals.menu.buttonSelector, true);
+			mode.enter(config.modals.menu.buttonSelector);
 			dropbox.list('/ROMS/', function(list, error){
 				list = list.sort();
 				if (error) return console.error(error);
@@ -256,7 +256,7 @@ $(window).load(function () {
 	function loadRom (romName) {
 		mode.choose(config.modals.selectors.spinner)
 		dropbox.load('/ROMS/'+romName, function(romBuffer){
-			mode.out(config.modals.container, true);
+			mode.leave(config.modals.container);
 			mode.choose('', true);
 			start($(config.screen.selector)[0], arrayBufferToString(romBuffer));
 		});
@@ -307,18 +307,20 @@ $(window).load(function () {
 	}
 
 	function toggleGameMenu (show) {
-		if (show) {
-			pause();
-			$(document).configureUIActions(true);
-			$(config.game.wrapperSelector).addClass("blurred");
-			mode.in(config.game.menuSelector, true);
-			configurePauseResume(false);
-		} else {
-			$(document).configureUIActions(false);
-			$(config.game.wrapperSelector).removeClass("blurred");
-			mode.out(config.game.menuSelector, true);
-			configurePauseResume(true);
-			run();
+		if (!mode.currentlyChanging()) {
+			if (show) {
+				pause();
+				$(document).configureUIActions(true);
+				$(config.game.wrapperSelector).addClass("blurred");
+				mode.enter(config.game.menuSelector);
+				configurePauseResume(false);
+			} else {
+				$(document).configureUIActions(false);
+				$(config.game.wrapperSelector).removeClass("blurred");
+				mode.leave(config.game.menuSelector);
+				configurePauseResume(true);
+				run();
+			}
 		}
 	}
 
@@ -377,7 +379,7 @@ $(window).load(function () {
 		gameboy = null;
 		mode.choose(config.modals.selectors.loadGame);
 		toggleGameMenu(false);
-		mode.in(config.modals.container, true);
+		mode.enter(config.modals.container);
 		$(document).configureUIActions(true);
 		var canvas = $(config.screen.selector)[0];
 		canvas.getContext('2d').clearRect(0, 0, canvas.width, canvas.height);
