@@ -1,10 +1,11 @@
 // Made into a web worker. - 2/8/2013 Trey Keown <jfktrey@gmail.com>
 
 self.addEventListener('message', function(e) {
-	self.postMessage(JSON.stringify(e.data.value));
 	self.postMessage(
-		{'key':			e.data.key,
-		 'deflated':	zip_deflate(JSON.stringify(e.data.value))});
+		{
+            'key':			e.data.key,
+		    'value':        (e.data.deflate) ? zip_deflate(JSON.stringify(e.data.value)) : JSON.stringify(e.data.value)
+        });
 });
 
 ////////////////////////////////////////////////////////////////////////////////////////

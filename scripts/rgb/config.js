@@ -8,7 +8,8 @@ window.config = {
 		remote: 		false, 	// Use Spotneedle?
 		domlog: 		false, 	// Patch console.log, console.warn, and console.error to place output in DOM as well as console?
 		rps: 			false, 	// Show how many iterations of the main emulator loop take place per second (overriden to be true if #rps exists in the URL)
-		saves: 			false}, // Show how many saves have taken place via autosave
+		saves: 			false,	// Show how many saves have taken place via autosave
+		state: 			false}, // Show how many state autosaves have taken place
 	
 	// Emulator display settings
 	screen: {
@@ -66,6 +67,7 @@ window.config = {
 		pauseOnBlur: 	true, 			// Pause the game when the window no longer has focus.
 		newWindowLinks: true, 			// Open all links in a new window?
 		webAppCapable: 	false, 			// Do we want to let them put this on their homescreen?
+		useDeflate:		true,			// Use inflate/deflate to reduce size of data we're writing to localstorage (and speed up, in some cases)?
 		audioEnabled: 	true }, 		// Currently unused
 
 	// Dropbox-specific selectors and settings

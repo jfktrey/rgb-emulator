@@ -2,26 +2,30 @@
 var gameboy = null;						//GameBoyCore object.
 var gbRunInterval = null;				//GameBoyCore Timer
 var settings = [
-	true, 								// 0: Turn on sound.
-	true,								// 1: Boot with boot ROM first?
-	false,								// 2: Give priority to GameBoy mode
-	1,									// 3: Volume level set.
-	true,								// 4: Colorize GB mode?
-	false,								// 5: Disallow typed arrays? 											(should never be true)
-	8,									// 6: Interval for the emulator loop.
-	10,									// 7: Audio buffer minimum span amount over x interpreter iterations.
-	20,									// 8: Audio buffer maximum span amount over x interpreter iterations.
-	false,								// 9: Override to allow for MBC1 instead of ROM only (compatibility for broken 3rd-party cartridges).
-	false,								//10: Override MBC RAM disabling and always allow reading and writing to the banks.
-	false,								//11: Use the GameBoy boot ROM instead of the GameBoy Color boot ROM.
-	false,								//12: Scale the canvas in JS? Else, let the browser scale the canvas. 	(should never be true)
-	false,								//13: Use image smoothing based scaling? 								(if you like your pixels an ugly, blurred mess, set this to true)
-	300									//14: Delay until autoSave is called. Max time until save is called is this multiplied by two.
+	true, 				// 0: Turn on sound.
+	true,				// 1: Boot with boot ROM first?
+	false,				// 2: Give priority to GameBoy mode
+	1,					// 3: Volume level set.
+	true,				// 4: Colorize GB mode?
+	false,				// 5: Disallow typed arrays? 											(should never be true)
+	8,					// 6: Interval for the emulator loop.
+	10,					// 7: Audio buffer minimum span amount over x interpreter iterations.
+	20,					// 8: Audio buffer maximum span amount over x interpreter iterations.
+	false,				// 9: Override to allow for MBC1 instead of ROM only (compatibility for broken 3rd-party cartridges).
+	false,				//10: Override MBC RAM disabling and always allow reading and writing to the banks.
+	false,				//11: Use the GameBoy boot ROM instead of the GameBoy Color boot ROM.
+	false,				//12: Scale the canvas in JS? Else, let the browser scale the canvas. 	(should never be true)
+	false,				//13: Use image smoothing based scaling? 								(if you like your pixels an ugly, blurred mess, set this to true)
+	300,				//14: Delay until autoSave is called. Max time until save is called is this multiplied by two.
+	true,				//15: Attempt to automatically save the state for the current emulation?
+	5000,				//16: Milliseconds to wait until auto state save takes place
+	true				//17: Use deflate to decrease localstorage data size (in some cases, gives performance boost)
 ];
 
 var timeoutHandle = 0;
 var sigReceivedDuringTimeout = false;
 var lastLoadedRom = null;
+var stateKeeperHandle = 0;
 
 function delayedSave () {
 	if (timeoutHandle) {
@@ -50,7 +54,20 @@ function start(canvas, ROM) {
 	gameboy.openMBC = openSRAM;
 	gameboy.openRTC = openRTC;
 	gameboy.start();
+	if (settings[15]) setupStateKeeper();
 	run();
+}
+
+function stop () {
+	pause();
+	gameboy = null;
+	clearInterval(stateKeeperHandle);
+}
+
+function setupStateKeeper () {
+	stateKeeperHandle = setInterval(function(){
+		setValue("FREEZE_" + gameboy.name + "_S", gameboy.strippedSaveState());
+	}, settings[16]);
 }
 
 function run(ignoreWarnings) {

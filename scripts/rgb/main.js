@@ -128,6 +128,14 @@ $(window).load(function () {
 	});
 
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+//GLOBAL UTILITY FUNCTIONS////////////////////////////////////////////////////////////////////////////////////////////
+
+	window.getFunctionBody = function (functionToParse) {
+		var functionText = functionToParse.toString();
+		return functionText.slice(functionText.indexOf("{") + 1, functionText.lastIndexOf("}"));
+	}
+
+//////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 //OTHER FUNCTIONS/////////////////////////////////////////////////////////////////////////////////////////////////////
 	
 	// The guts of how the touch-based controls work
@@ -375,8 +383,7 @@ $(window).load(function () {
 		toggleGameMenu(false);
 	});
 	$(config.game.quitSelector).on("tap", function () {
-		pause();
-		gameboy = null;
+		stop();
 		mode.choose(config.modals.selectors.loadGame);
 		toggleGameMenu(false);
 		mode.enter(config.modals.container);
@@ -385,6 +392,14 @@ $(window).load(function () {
 		canvas.getContext('2d').clearRect(0, 0, canvas.width, canvas.height);
 	})
 
+	document.addEventListener('visibilitychange', function(){
+		if (document.hidden) {
+			console.log("he gone");
+		}
+		else {
+			console.log("he back");
+		}
+	}, false);
 	
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 //CLOSING CONFIGURATION///////////////////////////////////////////////////////////////////////////////////////////////		
@@ -421,9 +436,5 @@ $(window).load(function () {
 	// Updates the settings (in io.js) according to what's in config.js (for select values)
 	settings[4] 	= config.screen.gbColored;
 	settings[13] 	= config.screen.smoothing;
-
-	/*if (location.href.indexOf('#old') !== -1)  {
-		//Load old code here and use #old to test if a change is for the better
-	} //*/
 
 });

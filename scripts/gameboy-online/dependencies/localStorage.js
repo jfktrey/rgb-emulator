@@ -1,24 +1,27 @@
-var asyncDeflating = false;
-
 function initDeflate () {
 	window.deflateWorker = new Worker('./scripts/gameboy-online/dependencies/rawdeflate.js');
 	deflateWorker.onmessage = function (e) {
-		asyncDeflating = false;
-		if (e.data.key) window.localStorage.setItem(e.data.key, e.data.deflated);
+		window.localStorage.setItem(e.data.key, e.data.value);
 	} ;
 }
 
 function findValue(key) {
-	return	JSON.parse(
-				RawDeflate.inflate(
-					window.localStorage.getItem(key)));
+	var keyValue;
+
+	if (settings[17]) {
+		keyValue = RawDeflate.inflate(window.localStorage.getItem(key));
+	} else {
+		keyValue = window.localStorage.getItem(key);
+	}
+
+	return JSON.parse(keyValue);
 }
 
 function setValue(key, value) {
-	asyncDeflating = true;
 	deflateWorker.postMessage(
 		{	'key':		key,
-			'value':	value });
+			'value':	value,
+			'deflate':	settings[17] });
 }
 
 function deleteValue(key) {

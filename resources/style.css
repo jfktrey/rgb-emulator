@@ -438,7 +438,7 @@ h2.bottomSpacing {
 	left: 0;
 	right: 0;
 	margin: auto;
-	max-height: 340px;
+	max-height: 290px;
 }
 
 #itemListWrapperWrapper {
@@ -496,7 +496,7 @@ h2.bottomSpacing {
 /* Debugging Interface */
 
 #saveCount {
-	position: fixed;
+	position: absolute;
 	bottom: 0;
 	left: 0;
 	color: #FF0;
@@ -508,13 +508,13 @@ h2.bottomSpacing {
 }
 
 #saveCount:before {
-	content: '# of saves:\A';
+	content: 'saves:\A';
 	font-size: 9px;
 	color: #FF0;
 }
 
 #rps {
-	position: fixed;
+	position: absolute;
 	bottom: 0;
 	right: 0;
 	color: #0FF;
@@ -530,6 +530,27 @@ h2.bottomSpacing {
 	font-size: 9px;
 	color: #0FF;
 	padding: 0px 2px;
+}
+
+#stateCount {
+	position: absolute;
+	bottom: 0;
+	right: 0;
+	left: 0;
+	margin: 0 auto;
+	color: #F0F;
+	height: 30px;
+	background-color: #000;
+	white-space: pre;
+	line-height: 0.8em;
+	text-align: center;
+	width: 70px;
+}
+
+#stateCount:before {
+	content: 'state saves:\A';
+	font-size: 9px;
+	color: #F0F;
 }
 
 #debugMessages ul li {

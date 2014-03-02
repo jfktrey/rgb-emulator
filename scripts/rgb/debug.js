@@ -53,11 +53,24 @@
 		}
 	}
 
+	if (config.debug.state) {
+		// These two lines give us all the code inside the saveSRAM function, and only the code inside it.
+		var stateFunctionBody = window.getFunctionBody(setupStateKeeper);
+		var stateSplit = stateFunctionBody.split("}");
+		var stateEnd = stateSplit.pop();
+		stateFunctionBody = stateSplit.join("}") + ';STATE_textNode.nodeValue = ++STATE_count;' + "}" + stateEnd;
+
+		$('body').append('<div id="stateCount">0</div>');
+		window.STATE_count = 0;
+		window.STATE_textNode = document.getElementById('stateCount').firstChild;
+
+		window.setupStateKeeper = new Function(stateFunctionBody);
+	}
+
 ///////////////////////////////////////////////////////////////////////////////////////////////
 ////// Set up the runs per second counter
 	if (config.debug.rps) {
-		var runFunctionBody = GameBoyCore.prototype.run.toString();
-		runFunctionBody = runFunctionBody.slice(runFunctionBody.indexOf("{") + 1, runFunctionBody.lastIndexOf("}")); 	// Gives us all the code inside the GameBoyCore.prototype.run function, and only the code inside it.
+		runFunctionBody = window.getFunctionBody(GameBoyCore.prototype.run); 	// Gives us all the code inside the GameBoyCore.prototype.run function, and only the code inside it.
 
 		$('body').append('<div id="rps">0</div>');
 		window.RPS_count = 1;
@@ -94,7 +107,7 @@
 
 		window.saveSRAM = new Function(
 			saveFunctionBody + 
-			'\nSAVE_textNode.nodeValue = ++SAVE_count;'
+			';SAVE_textNode.nodeValue = ++SAVE_count;'
 		);
 	}
 })();
