@@ -4340,11 +4340,11 @@ GameBoyCore.prototype.strippedSaveState = function () {
 		this.hdmaRunning,
 		this.CPUTicks,
 		this.doubleSpeedShifter,
-		this.fromTypedArray(this.memory),
-		this.fromTypedArray(this.MBCRam),
-		this.fromTypedArray(this.VRAM),
+		this.memory,
+		this.MBCRam,
+		this.VRAM,
 		this.currVRAMBank,
-		this.fromTypedArray(this.GBCMemory),
+		this.GBCMemory,
 		this.MBC1Mode,
 		this.MBCRAMBanksEnabled,
 		this.currMBCRAMBank,
@@ -4392,7 +4392,7 @@ GameBoyCore.prototype.strippedSaveState = function () {
 		this.cHuC3,
 		this.cHuC1,
 		this.drewBlank,
-		this.fromTypedArray(this.frameBuffer),
+		this.frameBuffer,
 		this.bgEnabled,
 		this.BGPriorityEnabled,
 		this.channel1FrequencyTracker,
@@ -4425,7 +4425,7 @@ GameBoyCore.prototype.strippedSaveState = function () {
 		this.channel3patternType,
 		this.channel3frequency,
 		this.channel3consecutive,
-		this.fromTypedArray(this.channel3PCM),
+		this.channel3PCM,
 		this.channel4FrequencyPeriod,
 		this.channel4lastSampleLookup,
 		this.channel4totalLength,
@@ -4506,18 +4506,18 @@ GameBoyCore.prototype.strippedSaveState = function () {
 		this.numRAMBanks,
 		this.windowY,
 		this.windowX,
-		this.fromTypedArray(this.gbcOBJRawPalette),
-		this.fromTypedArray(this.gbcBGRawPalette),
-		this.fromTypedArray(this.gbOBJPalette),
-		this.fromTypedArray(this.gbBGPalette),
-		this.fromTypedArray(this.gbcOBJPalette),
-		this.fromTypedArray(this.gbcBGPalette),
-		this.fromTypedArray(this.gbBGColorizedPalette),
-		this.fromTypedArray(this.gbOBJColorizedPalette),
-		this.fromTypedArray(this.cachedBGPaletteConversion),
-		this.fromTypedArray(this.cachedOBJPaletteConversion),
-		this.fromTypedArray(this.BGCHRBank1),
-		this.fromTypedArray(this.BGCHRBank2),
+		this.gbcOBJRawPalette,
+		this.gbcBGRawPalette,
+		this.gbOBJPalette,
+		this.gbBGPalette,
+		this.gbcOBJPalette,
+		this.gbcBGPalette,
+		this.gbBGColorizedPalette,
+		this.gbOBJColorizedPalette,
+		this.cachedBGPaletteConversion,
+		this.cachedOBJPaletteConversion,
+		this.BGCHRBank1,
+		this.BGCHRBank2,
 		this.haltPostClocks,
 		this.interruptsRequested,
 		this.interruptsEnabled,
@@ -5036,15 +5036,23 @@ GameBoyCore.prototype.getROMImage = function () {
 	}
 	return this.ROMImage;
 };
+GameBoyCore.prototype.getROMName = function () {
+	var index, name = "";
+
+	for (index = 0x134; index < 0x13F; index++) {
+		if (this.ROMImage.charCodeAt(index) > 0) {
+			name += this.ROMImage[index];
+		}
+	}
+
+	return name;
+}
 GameBoyCore.prototype.interpretCartridge = function () {
 	var index;
 	
 	// ROM name
-	for (index = 0x134; index < 0x13F; index++) {
-		if (this.ROMImage.charCodeAt(index) > 0) {
-			this.name += this.ROMImage[index];
-		}
-	}
+	this.name = this.getROMName();
+
 	// ROM game code (for newer games)
 	for (index = 0x13F; index < 0x143; index++) {
 		if (this.ROMImage.charCodeAt(index) > 0) {

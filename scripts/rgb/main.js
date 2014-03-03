@@ -392,14 +392,7 @@ $(window).load(function () {
 		canvas.getContext('2d').clearRect(0, 0, canvas.width, canvas.height);
 	})
 
-	document.addEventListener('visibilitychange', function(){
-		if (document.hidden) {
-			console.log("he gone");
-		}
-		else {
-			console.log("he back");
-		}
-	}, false);
+	$(document).on('visibilitychange', visibilityManager);
 	
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 //CLOSING CONFIGURATION///////////////////////////////////////////////////////////////////////////////////////////////		

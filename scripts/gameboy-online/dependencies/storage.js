@@ -1,42 +1,55 @@
+var database = asyncStorage.create("rgb-data", function (db, numberOfEntries) {});
+
 function initDeflate () {
 	window.deflateWorker = new Worker('./scripts/gameboy-online/dependencies/rawdeflate.js');
 	deflateWorker.onmessage = function (e) {
-		window.localStorage.setItem(e.data.key, e.data.value);
+		database.setItem(e.data.key, e.data.value, function (value, key) {
+			console.log("Set data " + e.data.key + " asynchronously.");
+		});
 	} ;
 }
 
-function findValue(key) {
-	var keyValue;
-
-	if (settings[17]) {
-		keyValue = RawDeflate.inflate(window.localStorage.getItem(key));
-	} else {
-		keyValue = window.localStorage.getItem(key);
-	}
-
-	return JSON.parse(keyValue);
+function keyList () {
+	var list = [];
+	for (var i = 0, length = database.length; i < length; i++) {
+		list.push(findKey(i)); }
+	return list;
 }
 
-function setValue(key, value) {
-	deflateWorker.postMessage(
-		{	'key':		key,
-			'value':	value,
-			'deflate':	settings[17] });
+function findValue (key, callback) {
+	database.getItem(key, (function (callbackClosure, useDeflate, useB64) {
+		return function (value, key) {
+			console.log(value);
+			if (useB64) value = atob(value);
+			if (useDeflate) value = RawDeflate.inflate(value);
+			callbackClosure(JSON.parse(value), key);
+		}
+	})(callback, settings[17], settings[18]));
 }
 
-function deleteValue(key) {
-	window.localStorage.removeItem(key);
+function setValue (key, value, untype) {
+	deflateWorker.postMessage({
+		'key':		key,
+		'value':	value,
+		'deflate':	settings[17],
+		'base64':	settings[18],
+		'untype':	untype
+	});
+}
+
+function deleteValue (key) {
+	database.removeItem(key);
 }
 
 function checkStorageLength() {
-	return window.localStorage.length;
+	return database.length;
 }
 
-function findKey(keyNum) {
-	return window.localStorage.key(keyNum);
+function findKey (keyNum) {
+	return database.key(keyNum);
 }
 
-function getLocalStorageKeys() {
+function getLocalStorageKeys () {
 	var storageLength = checkStorageLength();
 	var keysFound = [];
 	var index = 0;
@@ -55,11 +68,11 @@ function getLocalStorageKeys() {
 	return keysFound;
 }
 
-function localStorageURL(keyName, dataFound, downloadName) {
+function localStorageURL (keyName, dataFound, downloadName) {
 	return "data:application/octet-stream;base64," + dataFound;
 }
 
-function getBlobPreEncoded(keyName) {
+function getBlobPreEncoded (keyName) {
 	if			(keyName.substring(0, 9) === "B64_SRAM_") {
 		return [keyName.substring(4), base64_decode(findValue(keyName))];
 		
@@ -72,7 +85,7 @@ function getBlobPreEncoded(keyName) {
 	}
 }
 
-function convertToBinary(jsArray) {
+function convertToBinary (jsArray) {
 	var length = jsArray.length;
 	var binString = "";
 	for (var indexBin = 0; indexBin < length; indexBin++) {
@@ -84,7 +97,7 @@ function convertToBinary(jsArray) {
 function arrayToBase64(arrayIn) {
 	var binString = "",
 		length = arrayIn.length;
-	
+
 	for (var index = 0; index < length; ++index) {
 		if (typeof arrayIn[index] == "number") {
 			binString += String.fromCharCode(arrayIn[index]);

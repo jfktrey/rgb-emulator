@@ -1,12 +1,31 @@
 // Made into a web worker. - 2/8/2013 Trey Keown <jfktrey@gmail.com>
 
 self.addEventListener('message', function(e) {
+    var returnData = e.data.value;
+    if (e.data.untype) returnData = untypeTypedArrays(returnData);
+    returnData = JSON.stringify(returnData);
+    if (e.data.deflate) returnData = zip_deflate(returnData);
+    if (e.data.base64) returnData = btoa(returnData);
 	self.postMessage(
 		{
             'key':			e.data.key,
-		    'value':        (e.data.deflate) ? zip_deflate(JSON.stringify(e.data.value)) : JSON.stringify(e.data.value)
+		    'value':        returnData
         });
 });
+
+function untypeTypedArrays (arrayOfArrays) {
+    var array;
+    for (var i = 0, length = arrayOfArrays.length; i < length; i++) {
+        array = arrayOfArrays[i];
+        if (typeof array === "object" && array !== null) {
+            var len = array.length;
+            var result = new Array(len);
+            while (--len >= 0) result[len] = array[len];
+            arrayOfArrays[i] = result;
+        }
+    }
+    return arrayOfArrays;
+}
 
 ////////////////////////////////////////////////////////////////////////////////////////
 

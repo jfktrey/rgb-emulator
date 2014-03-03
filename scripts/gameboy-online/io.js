@@ -19,13 +19,26 @@ var settings = [
 	300,				//14: Delay until autoSave is called. Max time until save is called is this multiplied by two.
 	true,				//15: Attempt to automatically save the state for the current emulation?
 	5000,				//16: Milliseconds to wait until auto state save takes place
-	true				//17: Use deflate to decrease localstorage data size (in some cases, gives performance boost)
+	true,				//17: Use deflate to decrease localstorage data size (gives performance boost in everything but Safari)
+	true				//18: base64-encode deflated data
 ];
 
 var timeoutHandle = 0;
 var sigReceivedDuringTimeout = false;
 var lastLoadedRom = null;
 var stateKeeperHandle = 0;
+var gbRunInterval = 0;
+var canAutoResume = false;
+
+var synchronousStorageRead = [null, null];
+
+function visibilityManager () {
+	if (document.hidden) {
+		pause(false, GameBoyEmulatorPlaying());
+	} else if (canAutoResume) {
+		run();
+	}
+}
 
 function delayedSave () {
 	if (timeoutHandle) {
@@ -48,26 +61,36 @@ function autoSave() {
 
 function start(canvas, ROM) {
 	clearLastEmulation();
-	autoSave();	//If we are about to load a new game, then save the last one...
 	lastLoadedRom = ROM;
 	gameboy = new GameBoyCore(canvas, ROM);
-	gameboy.openMBC = openSRAM;
-	gameboy.openRTC = openRTC;
-	gameboy.start();
-	if (settings[15]) setupStateKeeper();
-	run();
+	var romName = gameboy.getROMName();
+	$.when(openSRAM(romName), openRTC(romName)).done(function (sramValue, rtcValue) {
+		synchronousStorageRead[0] = sramValue;
+		synchronousStorageRead[1] = rtcValue;
+		console.log(synchronousStorageRead);
+		gameboy.openMBC = synchronousOpenSRAM;
+		gameboy.openRTC = synchronousOpenRTC;
+		gameboy.start();
+		run();
+	});
+}
+
+function synchronousOpenSRAM () {
+	return synchronousStorageRead[0];
+}
+
+function synchronousOpenRTC () {
+	return synchronousStorageRead[1];
 }
 
 function stop () {
 	pause();
 	gameboy = null;
-	clearInterval(stateKeeperHandle);
+	synchronousStorageRead = [null, null];
 }
 
-function setupStateKeeper () {
-	stateKeeperHandle = setInterval(function(){
-		setValue("FREEZE_" + gameboy.name + "_S", gameboy.strippedSaveState());
-	}, settings[16]);
+function autosaveState () {
+	setValue("FREEZE_" + gameboy.name + "_S", gameboy.strippedSaveState(), true);
 }
 
 function run(ignoreWarnings) {
@@ -79,10 +102,9 @@ function run(ignoreWarnings) {
 			gameboy.firstIteration = dateObj.getTime();
 			gameboy.iterations = 0;
 			gbRunInterval = setInterval(function () {
-				if (!document.hidden && !document.msHidden && !document.mozHidden && !document.webkitHidden) {
-					gameboy.run();
-				}
+				gameboy.run();
 			}, settings[6]);
+			if (settings[15]) stateKeeperHandle = setInterval(autosaveState, settings[16]);
 		}
 		else {
 			if (!ignoreWarnings) console.warn("The GameBoy core is already running.");
@@ -97,17 +119,24 @@ function restart () {
 	start(gameboy.canvas, lastLoadedRom);
 }
 
-function pause (ignoreWarnings) {
-	if (GameBoyEmulatorInitialized()) {
-		if (GameBoyEmulatorPlaying()) {
-			clearLastEmulation();
+function pause (ignoreWarnings, autoResume) {
+	if (gameboy) {
+		clearInterval(gbRunInterval);
+		clearInterval(stateKeeperHandle);
+		autoSave();
+		autosaveState();
+
+		if (GameBoyEmulatorInitialized()) {
+			if (GameBoyEmulatorPlaying()) {
+				clearLastEmulation();
+			} else {
+				if (!ignoreWarnings) console.warn("GameBoy core has already been paused.");
+			}
+		} else {
+			if (!ignoreWarnings) console.warn("GameBoy core cannot be paused while it has not been initialized.");
 		}
-		else {
-			if (!ignoreWarnings) console.warn("GameBoy core has already been paused.");
-		}
-	}
-	else {
-		if (!ignoreWarnings) console.warn("GameBoy core cannot be paused while it has not been initialized.");
+	
+		canAutoResume = autoResume;
 	}
 }
 function clearLastEmulation() {
@@ -124,7 +153,8 @@ function save() {
 	if (GameBoyEmulatorInitialized()) {
 		try {
 			var state_suffix = 0;
-			while (findValue("FREEZE_" + gameboy.name + "_" + state_suffix) != null) {
+			var keys = keyList();
+			while (keys.indexOf("FREEZE_" + gameboy.name + "_" + state_suffix) != -1) {
 				state_suffix++;
 			}
 			setValue("FREEZE_" + gameboy.name + "_" + state_suffix, gameboy.saveState());
@@ -145,11 +175,6 @@ function saveSRAM() {
 				var sram = gameboy.saveSRAMState();
 				if (sram.length > 0) {
 					console.info("Saving the SRAM...");
-					if (findValue("SRAM_" + gameboy.name) != null) {
-						//Remove the outdated storage format save:
-						console.info("Deleting the old SRAM save due to outdated format.");
-						deleteValue("SRAM_" + gameboy.name);
-					}
 					setValue("B64_SRAM_" + gameboy.name, arrayToBase64(sram));
 				}
 				else {
@@ -185,50 +210,64 @@ function saveRTC() {	//Execute this when SRAM is being saved as well.
 		console.warn("GameBoy core cannot be saved while it has not been initialized.");
 	}
 }
-function openSRAM(filename) {
+function openSRAM(filename, callback) {
+	var deferred = $.Deferred();
+	
 	try {
-		if (findValue("B64_SRAM_" + filename) != null) {
+		var keys = keyList();
+		if (keys.indexOf("B64_SRAM_" + filename) != -1) {
 			console.info("Found a previous SRAM state (Will attempt to load).");
-			return base64ToArray(findValue("B64_SRAM_" + filename));
-		}
-		else if (findValue("SRAM_" + filename) != null) {
-			console.info("Found a previous SRAM state (Will attempt to load).");
-			return findValue("SRAM_" + filename);
-		}
-		else {
+			findValue("B64_SRAM_" + filename, function (value) {
+				deferred.resolve(base64ToArray(value));
+			});
+		} else {
 			console.info("Could not find any previous SRAM copy for the current ROM.");
+			deferred.resolve([]);
 		}
 	}
 	catch (error) {
-		console.error("Could not open the  SRAM of the saved emulation state.");
+		console.error("Could not open the SRAM of the saved emulation state.");
+		deferred.resolve([]);
 	}
-	return [];
+	
+	return deferred.promise();
 }
-function openRTC(filename) {
+function openRTC(filename, callback) {
+	var deferred = $.Deferred();
+	
 	try {
-		if (findValue("RTC_" + filename) != null) {
+		var keys = keyList();
+		if (keys.indexOf("RTC_" + filename) != -1) {
 			console.info("Found a previous RTC state (Will attempt to load).");
-			return findValue("RTC_" + filename);
+			findValue("RTC_" + filename, function (value) {
+				deferred.resolve(value);
+			});
 		}
 		else {
 			console.info("Could not find any previous RTC copy for the current ROM.");
+			deferred.resolve([]);
 		}
 	}
 	catch (error) {
 		console.error("Could not open the RTC data of the saved emulation state.");
+		deferred.resolve([]);
 	}
-	return [];
+
+	return deferred.promise();
 }
 function openState(filename, canvas) {
 	try {
-		if (findValue(filename) != null) {
+		var keys = keyList();
+		if (keys.indexOf(filename) != -1) {
 			try {
 				clearLastEmulation();
 				console.info("Attempting to run a saved emulation state.");
 				gameboy = new GameBoyCore(canvas, "");
 				gameboy.savedStateFileName = filename;
-				gameboy.returnFromState(findValue(filename));
-				run();
+				findValue(filename, function (value) {
+					gameboy.returnFromState(value);
+					run();
+				});
 			}
 			catch (error) {
 				alert(error.message + " file: " + error.fileName + " line: " + error.lineNumber);
