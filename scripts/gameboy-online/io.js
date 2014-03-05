@@ -33,10 +33,12 @@ var canAutoResume = false;
 var synchronousStorageRead = [null, null];
 
 function visibilityManager () {
-	if (document.hidden) {
-		pause(false, GameBoyEmulatorPlaying());
-	} else if (canAutoResume) {
-		run();
+	if (gameboy) {
+		if (document.hidden) {
+			pause(GameBoyEmulatorPlaying());
+		} else if (canAutoResume) {
+			run();
+		}
 	}
 }
 
@@ -67,7 +69,6 @@ function start(canvas, ROM) {
 	$.when(openSRAM(romName), openRTC(romName)).done(function (sramValue, rtcValue) {
 		synchronousStorageRead[0] = sramValue;
 		synchronousStorageRead[1] = rtcValue;
-		console.log(synchronousStorageRead);
 		gameboy.openMBC = synchronousOpenSRAM;
 		gameboy.openRTC = synchronousOpenRTC;
 		gameboy.start();
@@ -93,7 +94,7 @@ function autosaveState () {
 	setValue("FREEZE_" + gameboy.name + "_S", gameboy.strippedSaveState(), true);
 }
 
-function run(ignoreWarnings) {
+function run () {
 	if (GameBoyEmulatorInitialized()) {
 		if (!GameBoyEmulatorPlaying()) {
 			gameboy.stopEmulator &= 1;
@@ -107,11 +108,11 @@ function run(ignoreWarnings) {
 			if (settings[15]) stateKeeperHandle = setInterval(autosaveState, settings[16]);
 		}
 		else {
-			if (!ignoreWarnings) console.warn("The GameBoy core is already running.");
+			console.warn("The GameBoy core is already running.");
 		}
 	}
 	else {
-		if (!ignoreWarnings) console.warn("GameBoy core cannot run while it has not been initialized.");
+		console.warn("GameBoy core cannot run while it has not been initialized.");
 	}
 }
 
@@ -119,7 +120,7 @@ function restart () {
 	start(gameboy.canvas, lastLoadedRom);
 }
 
-function pause (ignoreWarnings, autoResume) {
+function pause (autoResume) {
 	if (gameboy) {
 		clearInterval(gbRunInterval);
 		clearInterval(stateKeeperHandle);
@@ -130,10 +131,10 @@ function pause (ignoreWarnings, autoResume) {
 			if (GameBoyEmulatorPlaying()) {
 				clearLastEmulation();
 			} else {
-				if (!ignoreWarnings) console.warn("GameBoy core has already been paused.");
+				console.warn("GameBoy core has already been paused.");
 			}
 		} else {
-			if (!ignoreWarnings) console.warn("GameBoy core cannot be paused while it has not been initialized.");
+			console.warn("GameBoy core cannot be paused while it has not been initialized.");
 		}
 	
 		canAutoResume = autoResume;

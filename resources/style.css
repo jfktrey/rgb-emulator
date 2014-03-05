@@ -313,16 +313,35 @@ h2.bottomSpacing {
 	border: none;
 }
 
+.itemList li.embeddedList {
+	padding: 0;
+	border-top: 2px solid #D8D8D8;
+}
+
 .rightside {
 	float: right;
 	padding-left: 15px;
 }
 
-.listItemIcon {
-	display: none;
-	height: 22px;
-	float: left;
-	margin: 1px 15px 0 0;
+.toggleswitch {
+	display: inline-block;
+	float: right;
+	margin-top: 2px;
+}
+
+.menuitem-checkbox {
+	height: 18px;
+	width: 18px;
+	background: url('./iconmonstr/checkbox-empty.svg');
+	background-size: contain;
+	background-repeat: no-repeat;
+	margin: 3px 0 0 -25px;
+	position: absolute;
+}
+
+.menuitem-checkbox.checked {
+	background: url('./iconmonstr/checkbox-checked.svg');
+	background-size: contain;
 }
 
 .itemList .letterSectionHeader {
@@ -441,7 +460,7 @@ h2.bottomSpacing {
 	left: 50%;
 	width: 90%;
 	min-width: 150px;
-	max-width: 750px;
+	max-width: 500px;
 	height: 100%;
 	padding-top: 49px;
 	box-sizing: border-box;

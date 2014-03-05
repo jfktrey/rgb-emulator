@@ -4,9 +4,7 @@
 window.config = {
 	// Debug settings (can be overridden with specific hashes in the URL)
 	debug:	{
-		enabled:		false,	// Enable debug features (overriden to be true if #debug exists in the URL)
-		remote: 		false, 	// Use Spotneedle?
-		domlog: 		false, 	// Patch console.log, console.warn, and console.error to place output in DOM as well as console?
+		enabled:		true,	// Enable debug features (overriden to be true if #debug exists in the URL)
 		rps: 			false, 	// Show how many iterations of the main emulator loop take place per second (overriden to be true if #rps exists in the URL)
 		saves: 			false,	// Show how many saves have taken place via autosave
 		state: 			false}, // Show how many state autosaves have taken place
@@ -29,8 +27,8 @@ window.config = {
 		wrapperSelector:		"#game",
 		menuSelector:			"#gameMenuWrapper",
 		menuCloseSelector:		"#gameMenuClose",
-		resetSelector:			"#gmResetGame",
-		quitSelector:			"#gmQuitGame",
+		resetSelector:			"#menuitem-game-reset",
+		quitSelector:			"#menuitem-game-quit",
 		preventUIActionsFor:	":not(#gameMenu, #gameMenu *)"
 	},
 	
@@ -73,7 +71,7 @@ window.config = {
 	// Dropbox-specific selectors and settings
 	dropbox: {
 		connectButtonSelector: 			'#connectButton',
-		romChooserSelector: 			'#loadGame',
+		romChooserSelector: 			'#menuitem-main-load',
 		romListSelector: 				'#gameList',
 		spinnerSelector: 				'#loading',
 		splashSelector: 				'#front'
@@ -92,14 +90,16 @@ window.config = {
 
 		// The section of the UI, and the triggers that activate it (when tapped)
 		triggers: {
-			about: 		'#mmAbout',
-			spinner: 	'#connectButton',
-			loadGame: 	'#mmLoadGame'},
+			loadGame: 	'#menuitem-main-load',
+			about: 		'#menuitem-main-about',
+			debugMenu:	'#menuitem-main-debug',
+			spinner: 	'#connectButton' },
 
 		// The section of the UI, and all of the elements that should be shown when it is active
 		selectors: {
 			mainMenu: 	'#mainMenu, #mainMenuHint',
 			loadGame: 	'#loadGame, #loadGameHint',
+			debugMenu:	'#debugMenu, #debugHint',
 			about: 		'#about, #aboutHint',
 			spinner: 	'#loading, #loadingHint',
 			connect: 	'#connectButton, #connectHint' },

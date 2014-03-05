@@ -13,6 +13,7 @@
 
 		<script src="./scripts/libraries/jquery.tap.min.js"></script>
 		<script src="./scripts/libraries/jquery.prefixfree-events.js"></script>
+		<script src="./scripts/libraries/jquery-toggleit.min.js"></script>
 		
 		<script src="./scripts/gameboy-online/core.js"></script>
 		<script src="./scripts/gameboy-online/io.js"></script>
@@ -74,12 +75,24 @@
 			
 				<div id="mainMenu" class="fastFade">
 					<ul class="itemList">
-						<li id="mmLoadGame"><img class="listItemIcon" src="./resources/iconmonstr/play.svg">Load Game</li>
-						<li id="mmAddGame"><img class="listItemIcon" src="./resources/iconmonstr/plus.svg">Add Game</li>
-						<li id="mmRemoveGame"><img class="listItemIcon" src="./resources/iconmonstr/minus.svg">Remove Game</li>
-						<li id="mmManageSaves"><img class="listItemIcon" src="./resources/iconmonstr/floppy.svg">Manage Saves</li>
-						<li id="mmGameSettings"><img class="listItemIcon" src="./resources/iconmonstr/gear.svg">Settings</li>
-						<li id="mmAbout"><img class="listItemIcon" src="./resources/iconmonstr/info.svg">About</li>
+						<li id="menuitem-main-load">Load Game</li>
+						<li id="menuitem-main-add">Add Game</li>
+						<li id="menuitem-main-remove">Remove Game</li>
+						<li id="menuitem-main-saves">Manage Saves</li>
+						<li id="menuitem-main-settings">Settings</li>
+						<li id="menuitem-main-debug" style="display:none">Debug</li>
+						<li id="menuitem-main-about">About</li>
+					</ul>
+				</div>
+
+				<div id="debugMenu" class="fastFade">
+					<ul class="itemList">
+						<li id="menuitem-debug-rps">RPS Counter<input type="checkbox" class="toggleswitch" data-debug-option="run"></li>
+						<li id="menuitem-debug-state">State Counter<input type="checkbox" class="toggleswitch" data-debug-option="state"></li>
+						<li id="menuitem-debug-save">Save Counter<input type="checkbox" class="toggleswitch" data-debug-option="save"></li>
+						<li id="menuitem-debug-console" class="embeddedList">
+							<ul class="itemList" id="debugMessages"></ul>
+						</li>
 					</ul>
 				</div>
 			</div>
@@ -100,6 +113,7 @@
 				<span id="removeGameHint">Remove Game</span>
 				<span id="manageSavesHint">Manage Saves</span>
 				<span id="gameSettingsHint">Settings</span>
+				<span id="debugHint">Debug Menu</span>
 				<span id="aboutHint">About RGB</span>
 				<span id="loadingHint">Loading...</span>
 			</div>
@@ -110,11 +124,11 @@
 				<div id="itemListWrapperWrapper">
 					<div id="itemListWrapper">
 						<ul class="itemList">
-							<li id="gmQuitGame">Quit Game</li>
-							<li id="gmResetGame">Reset Game</li>
-							<li id="gmLoadState">Load State</li>
-							<li id="gmSaveState">Save State</li>
-							<li id="gmSettings">Settings</li>
+							<li id="menuitem-game-quit">Quit Game</li>
+							<li id="menuitem-game-reset">Reset Game</li>
+							<li id="menuitem-game-load">Load State</li>
+							<li id="menuitem-game-save">Save State</li>
+							<li id="menuitem-game-settings">Settings</li>
 						</ul>
 					</div>
 				</div>

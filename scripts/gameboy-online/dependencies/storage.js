@@ -4,7 +4,6 @@ function initDeflate () {
 	window.deflateWorker = new Worker('./scripts/gameboy-online/dependencies/rawdeflate.js');
 	deflateWorker.onmessage = function (e) {
 		database.setItem(e.data.key, e.data.value, function (value, key) {
-			console.log("Set data " + e.data.key + " asynchronously.");
 		});
 	} ;
 }
@@ -19,7 +18,6 @@ function keyList () {
 function findValue (key, callback) {
 	database.getItem(key, (function (callbackClosure, useDeflate, useB64) {
 		return function (value, key) {
-			console.log(value);
 			if (useB64) value = atob(value);
 			if (useDeflate) value = RawDeflate.inflate(value);
 			callbackClosure(JSON.parse(value), key);

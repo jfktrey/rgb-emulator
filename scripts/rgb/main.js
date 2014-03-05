@@ -104,6 +104,26 @@ $(window).load(function () {
 		}
 	})(jQuery);
 
+	// Makes dealing with toggleIt easier
+	(function ($) {
+		$.fn.toggleSwitch = function (newValue) {
+			var selected = []
+			$(this).find(".toggleIt-container").each( function (index) {
+				if (newValue !== undefined) {
+					if (!$(this).hasClass("selected") != !newValue) $(this).click();
+				} else {
+					selected.push($(this).hasClass("selected"));
+				}
+			});
+			
+			if (newValue !== undefined) {
+				return $(this);
+			} else {
+				return selected;
+			}
+		}
+	})(jQuery);
+
 	// Loading same-domain scripts using $.getScript() can cause errors to not show.
 	// Patch getScript so that it uses the script element injection method, which it normally uses for cross-domain requests.
 	// This way, errors show up. (see on stackoverflow: http://stackoverflow.com/a/691661/433380 )
@@ -302,12 +322,14 @@ $(window).load(function () {
 	// Also allows us to disable resume functionality while we're in the in-game menu
 	function configurePauseResume (enabled) {
 		if (enabled) {
-			$(window).blur(function(){
-				pause(true)
-			});
-			$(window).focus(function(){
-				run(true)
-			});
+			if (gameboy) {
+				$(window).blur(function(){
+					pause()
+				});
+				$(window).focus(function(){
+					run()
+				});
+			}
 		} else {
 			$(window).off('blur');
 			$(window).off('focus');
@@ -329,6 +351,12 @@ $(window).load(function () {
 				configurePauseResume(true);
 				run();
 			}
+		}
+	}
+
+	function preloadImages (urls) {
+		for (var i = 0, length = urls.length; i < length; i++) {
+			$('<img/>')[0].src = urls[i];
 		}
 	}
 
@@ -430,4 +458,10 @@ $(window).load(function () {
 	settings[4] 	= config.screen.gbColored;
 	settings[13] 	= config.screen.smoothing;
 
+	// Preload images
+	preloadImages([
+		'./resources/iconmonstr/checkbox-checked.svg',
+		'./resources/iconmonstr/checkbox-empty.svg',
+		'./resources/iconmonstr/cross.svg'
+	]);
 });
