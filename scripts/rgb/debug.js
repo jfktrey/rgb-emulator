@@ -88,7 +88,7 @@ window.debug = {
 					'	RPS_logged.push(' +						// Store all RPS in a variable called log
 					'		RPS_new = 1000 / (RPS_smooth.reduce(function (a,b) { return a + b }) / 75));' + 	// 1000ms / ()
 					'	RPS_smooth = [];' +
-					'	RPS_textNode.nodeValue = RPS_average = (((RPS_logged.length - 1) * RPS_average) + RPS_new) / RPS_logged.length' +
+					'	RPS_textNode.nodeValue = RPS_average = ((((RPS_logged.length - 1) * RPS_average) + RPS_new) / RPS_logged.length) | 0' +
 					'}' +
 					'RPS_last = now;' + runFunctionBody 			// Prepends our debug script to the GameBoyCore.prototype.run function
 				);
