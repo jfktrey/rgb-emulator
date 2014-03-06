@@ -86,6 +86,7 @@ function synchronousOpenRTC () {
 
 function stop () {
 	pause();
+	clearInterval(gbRunInterval);
 	gameboy = null;
 	synchronousStorageRead = [null, null];
 }
@@ -95,6 +96,10 @@ function autosaveState () {
 }
 
 function run () {
+	if (!CanSendPauseRun()) {
+		console.warn("GameBoy core is still initializing.");
+		return;
+	}
 	if (GameBoyEmulatorInitialized()) {
 		if (!GameBoyEmulatorPlaying()) {
 			gameboy.stopEmulator &= 1;
@@ -116,11 +121,16 @@ function run () {
 	}
 }
 
-function restart () {
-	start(gameboy.canvas, lastLoadedRom);
+function restart (canvas) {
+	stop();
+	start(canvas, lastLoadedRom);
 }
 
 function pause (autoResume) {
+	if (!CanSendPauseRun()) {
+		console.warn("GameBoy core is still initializing.");
+		return;
+	}
 	if (gameboy) {
 		clearInterval(gbRunInterval);
 		clearInterval(stateKeeperHandle);
@@ -485,5 +495,13 @@ function initNewCanvasSize() {
 				gameboy.initLCD();
 			}
 		}
+	}
+}
+
+function CanSendPauseRun () {
+	if (gameboy) {
+		return gameboy.audioHandle !== null;
+	} else {
+		return false;
 	}
 }

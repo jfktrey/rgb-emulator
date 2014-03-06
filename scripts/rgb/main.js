@@ -407,7 +407,7 @@ $(window).load(function () {
 	$(config.game.menuCloseSelector).on("tap", function () {
 		toggleGameMenu(false) });
 	$(config.game.resetSelector).on("tap", function () {
-		restart();
+		restart($(config.screen.selector)[0]);
 		toggleGameMenu(false);
 	});
 	$(config.game.quitSelector).on("tap", function () {
