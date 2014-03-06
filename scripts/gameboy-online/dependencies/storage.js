@@ -17,6 +17,7 @@ function keyList () {
 }
 
 function findValue (key, callback) {
+	console.log("FINDING VALUE...")
 	database.getItem(key, (function (callbackClosure, useDeflate, useB64) {
 		return function (value, key) {
 			if (useB64) value = atob(value);

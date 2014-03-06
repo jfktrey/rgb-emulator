@@ -324,10 +324,10 @@ $(window).load(function () {
 		if (enabled) {
 			if (gameboy) {
 				$(window).blur(function(){
-					pause()
+					pause(true)
 				});
 				$(window).focus(function(){
-					run()
+					run(true)
 				});
 			}
 		} else {
@@ -339,7 +339,7 @@ $(window).load(function () {
 	function toggleGameMenu (show) {
 		if (!mode.currentlyChanging()) {
 			if (show) {
-				pause();
+				pause(true);
 				$(document).configureUIActions(true);
 				$(config.game.wrapperSelector).addClass("blurred");
 				mode.enter(config.game.menuSelector);
@@ -349,7 +349,7 @@ $(window).load(function () {
 				$(config.game.wrapperSelector).removeClass("blurred");
 				mode.leave(config.game.menuSelector);
 				configurePauseResume(true);
-				run();
+				run(true);
 			}
 		}
 	}

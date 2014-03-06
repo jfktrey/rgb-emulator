@@ -24,22 +24,22 @@ window.debug = {
 			if (!debug.patch.console.patched) {
 				console.log = function () {
 					debug.patch.console.original.log.apply(console, arguments);
-					$('#debugMessages').prepend('<li class="consoleLog">' + argumentStringify(arguments) + '</li>');
+					$('#debugMessages').append('<li class="consoleLog">' + argumentStringify(arguments) + '</li>');
 				}
 				
 				console.info = function () {
 					debug.patch.console.original.info.apply(console, arguments);
-					$('#debugMessages').prepend('<li class="consoleInfo">' + argumentStringify(arguments) + '</li>');
+					$('#debugMessages').append('<li class="consoleInfo">' + argumentStringify(arguments) + '</li>');
 				}
 				
 				console.warn = function () {
 					debug.patch.console.original.warn.apply(console, arguments);
-					$('#debugMessages').prepend('<li class="consoleWarn">' + argumentStringify(arguments) + '</li>');
+					$('#debugMessages').append('<li class="consoleWarn">' + argumentStringify(arguments) + '</li>');
 				}
 				
 				console.error = function () {
 					debug.patch.console.original.error.apply(console, arguments);
-					$('#debugMessages').prepend('<li class="consoleError">' + argumentStringify(arguments) + '</li>');
+					$('#debugMessages').append('<li class="consoleError">' + argumentStringify(arguments) + '</li>');
 				}
 		
 				argumentStringify = function (args) {
@@ -90,7 +90,7 @@ window.debug = {
 					'	RPS_smooth = [];' +
 					'	RPS_textNode.nodeValue = RPS_average = ((((RPS_logged.length - 1) * RPS_average) + RPS_new) / RPS_logged.length) | 0' +
 					'}' +
-					'RPS_last = now;' + runFunctionBody 			// Prepends our debug script to the GameBoyCore.prototype.run function
+					'RPS_last = now;' + runFunctionBody 			// appends our debug script to the GameBoyCore.prototype.run function
 				);
 			}
 		} else {

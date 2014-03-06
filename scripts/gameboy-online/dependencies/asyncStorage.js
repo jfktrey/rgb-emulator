@@ -1,4 +1,606 @@
 /*!
 (C) Andrea Giammarchi, @WebReflection - Mit Style License
 */
-(function(N,M){if(N in M){return}if(typeof __dirname!="undefined"){M.create=j;M=global}else{M[N]={create:j}}function j(X,aa,Z,Y){return new D(X,aa||n,Z||n,Y||1<<20)}function z(){return"".concat.apply("",arguments)}function n(){console.log("[ERROR]",arguments)}var e=j.bind||function(X){var Z=this,Y=[].slice.call(arguments,1);return function(){return Z.apply(X,Y.concat.apply(Y,arguments))}},p=[].indexOf||function(Y){for(var X=this.length;X--&&this[X]!==Y;){}return X},L=M.setTimeout,y="\x00",f="ndexedDB",O="openDatabase",J="executeSql",C="transaction",R="readTransaction",B="localStorage",r="prototype",t=N+"_data",I=N+"_key",g=N+"_value",G="_keys",w="length",h="key",S="getItem",V="setItem",U="removeItem",l="clear",Q=M["i"+f]||M["webkitI"+f]||M["mozI"+f]||M["msI"+f],A=null,u=M.Math.max,D,W,a,s,K,c,T,P,F,x,E,k,m,o,v;if(O in M){D=function D(Y,ac,ab,Z){var X=this;ab=e.call(ab,X);X.name=Y;X.type="WebSQL";try{(X._db=M[O](Y,"1.0","",Z))[C](e.call(a,X,ac,ab),ab)}catch(aa){ab(aa)}};a=function(Z,Y,X){X[J](z("CREATE TABLE IF NOT EXISTS ",t," ","(",g," BLOB NOT NULL,",I," TEXT NOT NULL PRIMARY KEY",")"),[],e.call(s,this,Z,Y),Y)};s=function(Y,X){this._db[R](e.call(K,this,Y,X))};K=function(Z,Y,X){X[J](z("SELECT ",I," AS k FROM ",t),[],e.call(c,this,Z),Y)};c=function(ac,Z,X){for(var aa=this[G]=[],ab=X.rows,Y=ab[w];Y--;aa[Y]=ab.item(Y).k){}ac.call(this,this,this[w]=aa[w])};E=function(X,Y,aa,Z){if(!Z){this[w]=this[G].push(X)}aa.call(this,Y,X,this)};T=function(Y,aa,ac,Z,ab,X){X[J](ab?z("UPDATE ",t," SET ",g," = ? WHERE ",I," = ?"):z("INSERT INTO ",t," VALUES (?, ?)"),[aa,Y],e.call(E,this,Y,aa,ac,ab),Z)};k=function(Z,ab,ac,aa,Y,X){this._db[C](e.call(T,this,Z,ab,ac,aa,!!X.rows.length))};P=function(Y,ab,ac,aa,Z,X){X[J](z("SELECT ",g," AS v FROM ",t," WHERE ",I," = ?"),[Y],e.call(Z,this,Y,ab,ac,aa),aa)};m=function(Z,ac,ad,ab,Y,X){var aa=X.rows;ad.call(this,aa[w]?aa.item(0).v:ac,Z,this)};o=function(Y){var X=this;Y.call(X,X,X[G][w]=X[w]=0)};F=function(Z,Y,X){X[J](z("DELETE FROM ",t),[],e.call(o,this,Z),Y)};v=function(aa,ab,Z,X){if(this[w]=this[w]-u(X.rowsAffected?1:0)){var Y=p.call(this[G],aa);if(~Y){this[G].splice(Y,1)}}else{this[G][w]=0}ab.call(this,aa,this)};x=function(Y,aa,Z,X){X[J](z("DELETE FROM ",t," WHERE ",I," = ?"),[Y],e.call(v,this,Y,aa),Z)};W=D[r];W[h]=function q(X){return this[G][X]};W[U]=function i(X,Z,Y){this._db[C](e.call(x,this,X,Z||n,e.call(Y||n,this)))};W[l]=function H(Y,X){this._db[C](e.call(F,this,Y||n,e.call(X||n,this)))};W[S]=function b(X,Z,Y){this._db[R](e.call(P,this,X,null,Z||n,e.call(Y||n,this),m))};W[V]=function d(X,Z,aa,Y){this._db[R](e.call(P,this,X,Z,aa||n,e.call(Y||n,this),k))}}else{if(Q){D=function D(Z,ac,ab){try{var Y=this,X=Q.open(Y.name=Z,1);Y.type="IndexedDB";X[R]("upgradeneeded",a,!1);X[R](J,e.call(s,Y,ac),!1);X[R](f,e.call(ab,Y),!1)}catch(aa){ab.call(this,aa)}};J="success";f="error";R="addEventListener";a=function(X){X.target.result.createObjectStore(t,{keyPath:I,autoIncrement:!1}).createIndex(g,g,{unique:!1})};s=function(Z,Y){var X=this;X[G]=[];X._db=Y.target.result;m(X).openCursor()[R](J,e.call(K,X,Z),!1)};K=function(aa,Y){var X=this,Z=Y.target.result;if(Z){X[G].push(Z.key);Z["continue"]()}else{aa.call(X,X,c(X))}};c=function(X){return X[w]=X[G][w]};k=function(Y,aa,Z){var X=Z.target.result;aa.call(this,X?X[g]:A,Y,this)};E=function(Z,ab,ac,aa){var X=this,Y=p.call(X[G],Z);~Y||X[G].push(Z);c(X);ac.call(X,ab,Z,X)};m=function(Y,aa){var X=Y._db,Z=X[C];return Z.apply(X,[t].concat(aa?"readwrite":[])).objectStore(t)};v=function(Z,ab,aa){var X=this,Y=p.call(X[G],Z);~Y&&X[G].splice(Y,1);c(X);ab.call(X,Z,X)};o=function(Y){var X=this;Y.call(X,X,X[G][w]=X[w]=0)};W=D[r];W[h]=function q(X){return this[G][X]};W[U]=function i(X,aa,Y){var Z=m(this,1)["delete"](X);Z[R](J,e.call(v,this,X,aa||n),!1);Z[R](f,e.call(Y||n,this),!1)};W[l]=function H(Z,X){var Y=m(this,1).clear();Y[R](J,e.call(o,this,Z||n),!1);Y[R](f,e.call(X||n,this),!1)};W[S]=function b(X,aa,Y){var Z=m(this).get(X);Z[R](J,e.call(k,this,X,aa||n),!1);Z[R](f,e.call(Y||n,this),!1)};W[V]=function d(X,aa,ac,Z){var Y={},ab;Y[I]=X;Y[g]=aa;ab=m(this,1).put(Y);ab[R](J,e.call(E,this,X,aa,ac||n),!1);ab[R](f,e.call(Z||n,this),!1)}}else{if(B in M){D=function D(Y,aa,Z){var X=this;X.name=Y;X.type=B;X._db=M[B];X._prefix=escape(t+y+X.name+y);X[G]=[];c.call(X);L(e.call(aa,X,X,X[w]),0)};c=function(){for(var Z=this,ae=Z._prefix,ad=Z[G],Y=Z._db,X=0,ab=0,ac=Y[w],aa;ab<ac;++ab){if(!(aa=Y[h](ab)||"").indexOf(ae)){ad[X++]=aa}}Z[w]=X};x=function(aa,ad,ac){var Y=this,ab=Y[G],X=Y._prefix+aa,Z=p.call(ab,X);if(~Z){ab.splice(Z,1);Y._db[U](X)}ad.call(Y,aa,Y)};F=function(ac,ab){for(var X=this,aa=X[G],Y=0,Z=aa[w];Y<Z;++Y){X._db[U](aa[Y])}ac.call(X,X,X[w]=X[G][w]=0)};P=function(Y,aa,Z){var X=this;aa.call(X,X._db[S](X._prefix+Y),Y,X)};T=function(Z,ab,ad,aa){var Y=this,X=Y._prefix+Z;try{Y._db[V](X,ab);if(!~p.call(Y[G],X)){Y[w]=Y[G].push(X)}ad.call(Y,ab,Z,Y)}catch(ac){aa.call(Y,ac)}};s=function(X){if(X._db[w]<X[G][w]){throw"unobtrusive attempt to manipulate the localStorage"}return X};W=D[r];W[h]=function q(Y){var X=s(this)[G][Y];return X==A?X:X.slice(this._prefix[w])};W[U]=function i(X,Z,Y){L(e.call(x,s(this),X,Z||n,Y||n),0)};W[l]=function H(Y,X){L(e.call(F,s(this),Y||n,X||n),0)};W[S]=function b(X,Z,Y){L(e.call(P,s(this),X,Z||n,Y||n),0)};W[V]=function d(X,Z,aa,Y){L(e.call(T,s(this),X,Z,aa||n,Y||n),0)}}else{D=function D(Y,aa,Z){var X=this;X.name=Y;X.type="cookie";X._db=M.document;X._prefix=t+y+X.name+y;X[G]=[];c.call(X);L(e.call(aa,X,X,X[w]),0)};c=function(){for(var af=this,ag=af._db.cookie.split(";"),ac=escape(af._prefix),ae=af[G],Z=0,ab=0,X=ag[w],Y,aa,ad;ab<X;++ab){Y=ag[ab];if(!~Y.indexOf(ac)){ae[Z++]=unescape(Y.slice(0,Y.indexOf("=")))}}af[w]=Z};s=function(X){if(X._db.cookie[w]<X[G].join(";")[w]){throw"unobtrusive attempt to manipulate cookies"}return X};x=function(aa,ae,ac){var Y=this,ab=Y[G],ad=Y._prefix+aa,X=escape(ad),Z=Y._db.cookie.indexOf(X);if(~Z){Y._db.cookie=X+"=;expires=Thu, 01-Jan-1970 00:00:01 GMT";Z=p.call(ab,ad);if(~Z){ab.splice(Z,1);Y[w]=ab.length}}ae.call(Y,aa,Y)};F=function(ac,ab){for(var X=this,aa=X._prefix,Z=X[G],Y=Z.length;Y--;x.call(X,Z[Y].slice(aa.length),n,n)){}ac.call(X,X,X[w]=X[G][w]=0)};P=function(aa,ac,Z){var ad=this,ae=ad._db.cookie,Y=escape(ad._prefix+aa),ab=ae.indexOf(Y+"=")+Y[w],af=A,X;if(++ab>Y[w]){X=ae.indexOf(";",ab);X<0&&(X=ae[w]);af=unescape(ae.substr(ab,X-ab))}ac.call(ad,af,aa,ad)};T=function(aa,ad,ae,ac){var Z=this,Y=Z._db.cookie,X=Z._prefix+aa,ab=escape(X);if(!~Y.indexOf(ab)){Z[w]=Z[G].push(X)}Z._db.cookie=z(ab,"=",escape(ad),";","expires=",(new Date(+new Date+365*60*60*24)).toGMTString());ae.call(Z,ad,aa,Z)};W=D[r];W[h]=function q(Y){var X=s(this)[G][Y];return X==A?X:X.slice(this._prefix[w])};W[U]=function i(X,Z,Y){L(e.call(x,s(this),X,Z||n,Y||n),0)};W[l]=function H(Y,X){L(e.call(F,s(this),Y||n,X||n),0)};W[S]=function b(X,Z,Y){L(e.call(P,s(this),X,Z||n,Y||n),0)};W[V]=function d(X,Z,aa,Y){L(e.call(T,s(this),X,Z,aa||n,Y||n),0)}}}}}("asyncStorage",this));
+/**@license (C) Andrea Giammarchi, @WebReflection - Mit Style License
+*/
+(function (asyncStorage, window) {"use strict";
+
+  if (asyncStorage in window) return;
+
+  // node.js exports
+  if (typeof __dirname != "undefined") {
+    window.create = create;
+    window = global;
+  } else {
+    window[asyncStorage] = {create: create};
+  }
+
+  // exported function
+  function create(name, callback, errorback, size) {
+    return new AsynchronousStorage(name, callback || nothingToDoHere, errorback || nothingToDoHere, size || 1 << 20);
+  }
+
+  // utility
+  function concat() {
+    return "".concat.apply("", arguments);
+  }
+
+  function nothingToDoHere() {
+    //^ for debug only
+    console.log("[ERROR]", arguments);
+    //$
+  }
+
+  var
+    // fast + ad-hoc + easy polyfills
+    bind                  = create.bind || function (self) {
+                            	var callback = this,
+                                	args = arguments.slice(1);
+                            	return function () {
+                                	return callback.apply(self, args.concat.apply(args, arguments));
+                            	};
+                            },
+    indexOf               = [].indexOf || function (value) {
+                            for (var i = this.length; i-- && this[i] !== value;);
+                            return i;
+                          },
+    setTimeout            = window.setTimeout,
+    // strings shortcuts
+    EOF                   = "\x00",
+    ndexedDB              = "ndexedDB",
+    openDatabase          = "openDatabase",
+    executeSql            = "executeSql",
+    transaction           = "transaction",
+    readTransaction       = "readTransaction",
+    localStorage          = "localStorage",
+    prototype             = "prototype",
+    unobtrusiveTableName  = asyncStorage + "_data",
+    keyFieldName          = asyncStorage + "_key",
+    valueFieldName        = asyncStorage + "_value",
+    $keys                 = "_keys",
+    $length               = "length",
+    $key                  = "key",
+    $getItem              = "getItem",
+    $setItem              = "setItem",
+    $removeItem           = "removeItem",
+    $clear                = "clear",
+    // original IndexedDB ... unfortunately it's not usable right now as favorite choice, actually dropped later on
+    indexedDB             = window["i" + ndexedDB] ||
+                            window["webkitI" + ndexedDB] ||
+                            window["mozI" + ndexedDB] ||
+                            window["msI" + ndexedDB],
+    // other shortcuts
+    NULL                  = null,
+    max                   = window.Math.max,
+    // lazily assigned variables
+    AsynchronousStorage, asPrototype,
+    prepareTable, readLength, checkLength, setLength,
+    prepareUpdate, checkIfPresent, clearAllItems, clearOneItem,
+    onUpdateComplete, onCheckComplete, onGetComplete, onItemsCleared, onItemCleared
+  ;
+
+  // the circus ... hopefully a bloody fallback will always be available
+  if (openDatabase in window) {
+    AsynchronousStorage = // WebSQL version
+    function AsynchronousStorage(name, callback, errorback, size) {
+      var self = this;
+      errorback = bind.call(errorback, self);
+      self.name = name;
+      self.type = "WebSQL";
+      try {
+        (self._db = window[openDatabase](
+          name,
+          "1.0",
+          "",
+          size
+        ))[transaction](bind.call(prepareTable, self, callback, errorback), errorback);
+      } catch(o_O) {
+        errorback(o_O);
+      }
+    };
+
+    prepareTable = function (callback, errorback, t) {
+      t[executeSql](concat(
+          'CREATE TABLE IF NOT EXISTS ',
+            unobtrusiveTableName, ' ',
+          '(',
+            valueFieldName, ' TEXT NOT NULL,',
+            keyFieldName, ' TEXT NOT NULL PRIMARY KEY',
+          ')'
+        ),
+        [],
+        bind.call(readLength, this, callback, errorback),
+        errorback
+      );
+    };
+
+    readLength = function (callback, errorback) {
+      this._db[readTransaction](
+        bind.call(checkLength, this, callback, errorback)
+      );
+    };
+
+    checkLength = function (callback, errorback, t) {
+      t[executeSql](concat(
+          'SELECT ',
+            keyFieldName,
+          ' AS k FROM ',
+          unobtrusiveTableName
+        ),
+        [],
+        bind.call(setLength, this, callback),
+        errorback
+      );
+    };
+
+    setLength = function (callback, t, result) {
+      for (var keys = this[$keys] = [], rows = result.rows, i = rows[$length]; i--; keys[i] = rows.item(i).k);
+      callback.call(this, this, this[$length] = keys[$length]);
+    };
+
+    onUpdateComplete = function (key, value, callback, update) {
+      if (!update) {
+        this[$length] = this[$keys].push(key);
+      }
+      callback.call(this, value, key, this);
+    };
+
+    prepareUpdate = function (key, value, callback, errorback, update, t) {
+      t[executeSql](update ?
+          concat('UPDATE ', unobtrusiveTableName, ' SET ', valueFieldName, ' = ? WHERE ', keyFieldName, ' = ?') :
+          concat('INSERT INTO ', unobtrusiveTableName, ' VALUES (?, ?)')
+        ,
+        [value, key],
+        bind.call(onUpdateComplete, this, key, value, callback, update),
+        errorback
+      );
+    };
+
+    onCheckComplete = function (key, value, callback, errorback, t, result) {
+      this._db[transaction](bind.call(
+        prepareUpdate, this, key, value,
+        callback, errorback,
+        !!result.rows.length
+      ));
+    };
+
+    checkIfPresent = function (key, value, callback, errorback, nextCallback, t) {
+      t[executeSql](concat(
+        'SELECT ',
+          valueFieldName, ' AS v FROM ',
+          unobtrusiveTableName,
+        ' WHERE ', keyFieldName, ' = ?'
+        ),
+        [key],
+        bind.call(nextCallback, this, key, value, callback, errorback),
+        errorback
+      );
+    };
+
+    onGetComplete = function (key, value, callback, errorback, t, result) {
+      var rows = result.rows;
+      callback.call(this, rows[$length] ? rows.item(0).v : value, key, this);
+    };
+
+    onItemsCleared = function (callback) {
+      var self = this;
+      callback.call(self, self, self[$keys][$length] = self[$length] = 0);
+    };
+
+    clearAllItems = function (callback, errorback, t) {
+      t[executeSql](concat(
+        'DELETE FROM ', unobtrusiveTableName
+      ), [], bind.call(onItemsCleared, this, callback), errorback);
+    };
+
+    onItemCleared = function (key, callback, t, result) {
+      // be sure meanwhile nobody used db.clear()
+      if (this[$length] = this[$length] - max(result.rowsAffected ? 1 : 0)) {
+        var i = indexOf.call(this[$keys], key);
+        if (~i) { // this should always be true ... anyway ...
+          this[$keys].splice(i, 1);
+        }
+      } else {
+        this[$keys][$length] = 0;
+      }
+      callback.call(this, key, this);
+    };
+
+    clearOneItem = function (key, callback, errorback, t) {
+      t[executeSql](concat(
+        'DELETE FROM ', unobtrusiveTableName, ' WHERE ', keyFieldName, ' = ?'
+      ), [key], bind.call(onItemCleared, this, key, callback), errorback);
+    };
+
+    asPrototype = AsynchronousStorage[prototype];
+    asPrototype[$key] = function key(i) {
+      return this[$keys][i];
+    };
+    asPrototype[$removeItem] = function removeItem(key, callback, errorback) {
+      this._db[transaction](bind.call(
+        clearOneItem, this, key,
+        callback || nothingToDoHere,
+        bind.call(errorback || nothingToDoHere, this)
+      ));
+    };
+    asPrototype[$clear] = function clear(callback, errorback) {
+      this._db[transaction](bind.call(
+        clearAllItems, this,
+        callback || nothingToDoHere,
+        bind.call(errorback || nothingToDoHere, this)
+      ));
+    };
+    asPrototype[$getItem] = function getItem(key, callback, errorback) {
+    	console.log("GETTING ITEM...");
+      this._db[readTransaction](
+      	bind.call(
+      		checkIfPresent,
+      		this,
+      		key,
+      		null,
+        	callback || nothingToDoHere,
+        	bind.call(errorback || nothingToDoHere, this),
+        	onGetComplete
+      ));
+    };
+    asPrototype[$setItem] = function setItem(key, value, callback, errorback) {
+      this._db[readTransaction](bind.call(
+        checkIfPresent, this, key, value,
+        callback || nothingToDoHere,
+        bind.call(errorback || nothingToDoHere, this),
+        onCheckComplete
+      ));
+    };
+  } else if (indexedDB) {
+    AsynchronousStorage = // IndexedDB version
+    function AsynchronousStorage(name, callback, errorback) {
+      try {
+        var
+          self = this,
+          db = indexedDB.open(self.name = name, 1)
+        ;
+        self.type = "IndexedDB";
+        db[readTransaction]("upgradeneeded", prepareTable, !1);
+        db[readTransaction](executeSql, bind.call(readLength, self, callback), !1);
+        db[readTransaction](ndexedDB, bind.call(errorback, self), !1);
+      } catch(o_O) {
+        errorback.call(this, o_O);
+      }
+    };
+
+    executeSql = "success";
+    ndexedDB = "error";
+    readTransaction = "addEventListener";
+
+    prepareTable = function (event) {
+      event.target.result.createObjectStore(
+        unobtrusiveTableName, {
+          keyPath: keyFieldName,
+          autoIncrement: !1
+      }).createIndex(
+        valueFieldName,
+        valueFieldName,
+        {unique: !1}
+      );
+    };
+
+    readLength = function (callback, event) {
+      var self = this;
+      self[$keys] = [];
+      self._db = event.target.result;
+      onGetComplete(self).openCursor()[readTransaction](
+        executeSql,
+        bind.call(checkLength, self, callback),
+        !1
+      );
+    };
+
+    checkLength = function (callback, event) {
+      var
+        self = this,
+        cursor = event.target.result
+      ;
+      if (cursor) {
+        self[$keys].push(cursor.key);
+        cursor["continue"]();
+      } else {
+        callback.call(self, self, setLength(self));
+      }
+    };
+
+    setLength = function (self) {
+      return self[$length] = self[$keys][$length];
+    };
+
+    onCheckComplete = function (key, callback, event) {
+      var result = event.target.result;
+      callback.call(this, result ? result[valueFieldName] : NULL, key, this);
+    };
+
+    onUpdateComplete = function (key, value, callback, event) {
+      var
+        self = this,
+        i = indexOf.call(self[$keys], key)
+      ;
+      ~i || self[$keys].push(key);
+      setLength(self);
+      callback.call(self, value, key, self);
+    };
+
+    onGetComplete = function (self, write) {
+      var
+        db = self._db,
+        t = db[transaction]
+      ;
+      return t.apply(db, [unobtrusiveTableName].concat(write ? "readwrite" : [])).objectStore(
+        unobtrusiveTableName
+      );
+    };
+
+    onItemCleared = function (key, callback, event) {
+      var
+        self = this,
+        i = indexOf.call(self[$keys], key)
+      ;
+      ~i && self[$keys].splice(i, 1);
+      setLength(self);
+      callback.call(self, key, self);
+    };
+
+    onItemsCleared = function (callback) {
+      var self = this;
+      callback.call(self, self, self[$keys][$length] = self[$length] = 0);
+    };
+
+    asPrototype = AsynchronousStorage[prototype];
+    asPrototype[$key] = function key(i) {
+      return this[$keys][i];
+    };
+    asPrototype[$removeItem] = function removeItem(key, callback, errorback) {
+      var op = onGetComplete(this, 1)["delete"](key);
+      op[readTransaction](executeSql, bind.call(
+        onItemCleared, this, key, callback || nothingToDoHere
+      ), !1);
+      op[readTransaction](ndexedDB, bind.call(errorback || nothingToDoHere, this), !1);
+    };
+    asPrototype[$clear] = function clear(callback, errorback) {
+      var op = onGetComplete(this, 1).clear();
+      op[readTransaction](executeSql, bind.call(
+        onItemsCleared, this, callback || nothingToDoHere
+      ), !1);
+      op[readTransaction](ndexedDB, bind.call(errorback || nothingToDoHere, this), !1);
+    };
+    asPrototype[$getItem] = function getItem(key, callback, errorback) {
+      var op = onGetComplete(this).get(key);
+      op[readTransaction](executeSql, bind.call(
+        onCheckComplete, this, key, callback || nothingToDoHere
+      ), !1);
+      op[readTransaction](ndexedDB, bind.call(errorback || nothingToDoHere, this), !1);
+    };
+    asPrototype[$setItem] = function setItem(key, value, callback, errorback) {
+      var data = {}, op;
+      data[keyFieldName] = key;
+      data[valueFieldName] = value;
+      op = onGetComplete(this, 1).put(data);
+      op[readTransaction](executeSql, bind.call(
+        onUpdateComplete, this, key, value, callback || nothingToDoHere
+      ), !1);
+      op[readTransaction](ndexedDB, bind.call(errorback || nothingToDoHere, this), !1);
+    };
+  } else if (localStorage in window) {
+    AsynchronousStorage = // localStorage version
+    function AsynchronousStorage(name, callback, errorback) {
+      var self = this;
+      self.name = name;
+      self.type = localStorage;
+      self._db = window[localStorage];
+      self._prefix = escape(unobtrusiveTableName + EOF + self.name + EOF);
+      self[$keys] = [];
+      setLength.call(self);
+      setTimeout(bind.call(callback, self, self, self[$length]), 0);
+    };
+
+    setLength = function () {
+      for (var
+        self = this,
+        prefix = self._prefix,
+        keys = self[$keys],
+        db = self._db,
+        l = 0, i = 0, length = db[$length],
+        key;
+        i < length; ++i
+      ) {
+        if (!(key = db[$key](i) || "").indexOf(prefix)) {
+          keys[l++] = key;
+        }
+      }
+      self[$length] = l;
+    };
+
+    clearOneItem = function (key, callback, errorback) {
+      var
+        self = this,
+        keys = self[$keys],
+        db_key = self._prefix + key,
+        i = indexOf.call(keys, db_key)
+      ;
+      if (~i) {
+        keys.splice(i, 1);
+        self._db[$removeItem](db_key);
+      }
+      callback.call(self, key, self);
+    };
+
+    clearAllItems = function (callback, errorback) {
+      for (var self = this, keys = self[$keys], i = 0, length = keys[$length]; i < length; ++i) {
+        self._db[$removeItem](keys[i]);
+      }
+      callback.call(self, self, self[$length] = self[$keys][$length] = 0);
+    };
+
+    checkIfPresent = function (key, callback, errorback) {
+      var self = this;
+      callback.call(self, self._db[$getItem](self._prefix + key), key, self);
+    };
+
+    prepareUpdate = function (key, value, callback, errorback) {
+      var
+        self = this,
+        db_key = self._prefix + key
+      ;
+      try {
+        self._db[$setItem](db_key, value);
+        if (!~indexOf.call(self[$keys], db_key)) {
+          self[$length] = self[$keys].push(db_key);
+        }
+        callback.call(self, value, key, self);
+      } catch(e) {
+        errorback.call(self, e);
+      }
+    };
+
+    readLength = function (self) {
+      if (self._db[$length] < self[$keys][$length]) {
+        throw "unobtrusive attempt to manipulate the localStorage";
+      }
+      return self;
+    };
+
+    asPrototype = AsynchronousStorage[prototype];
+    asPrototype[$key] = function key(i) {
+      var key = readLength(this)[$keys][i];
+      return key == NULL ? key : key.slice(this._prefix[$length]);
+    };
+    asPrototype[$removeItem] = function removeItem(key, callback, errorback) {
+      setTimeout(bind.call(clearOneItem, readLength(this), key, callback || nothingToDoHere, errorback || nothingToDoHere), 0);
+    };
+    asPrototype[$clear] = function clear(callback, errorback) {
+      setTimeout(bind.call(clearAllItems, readLength(this), callback || nothingToDoHere, errorback || nothingToDoHere), 0);
+    };
+    asPrototype[$getItem] = function getItem(key, callback, errorback) {
+      setTimeout(bind.call(checkIfPresent, readLength(this), key, callback || nothingToDoHere, errorback || nothingToDoHere), 0);
+    };
+    asPrototype[$setItem] = function setItem(key, value, callback, errorback) {
+      setTimeout(bind.call(prepareUpdate, readLength(this), key, value, callback || nothingToDoHere, errorback || nothingToDoHere), 0);
+    };
+  } else {
+    AsynchronousStorage = // cookie based version
+    function AsynchronousStorage(name, callback, errorback) {
+      var self = this;
+      self.name = name;
+      self.type = "cookie";
+      self._db = window.document;
+      self._prefix = unobtrusiveTableName + EOF + self.name + EOF;
+      self[$keys] = [];
+      setLength.call(self);
+      setTimeout(bind.call(callback, self, self, self[$length]), 0);
+    };
+
+    setLength = function () {
+      for (var
+        self = this,
+        db = self._db.cookie.split(";"),
+        prefix = escape(self._prefix),
+        keys = self[$keys],
+        l = 0, i = 0, length = db[$length],
+        db_key, tmp, value;
+        i < length; ++i
+      ) {
+        db_key = db[i];
+        if (!~db_key.indexOf(prefix)) {
+          keys[l++] = unescape(db_key.slice(0, db_key.indexOf("=")));
+        }
+      }
+      self[$length] = l;
+    };
+
+    readLength = function (self) {
+      // no idea how to properly prevent other libraries to erase AsynchronousStorage cookies
+      // ... oh, well, better than nothing I guess
+      if (self._db.cookie[$length] < self[$keys].join(";")[$length]) {
+        throw "unobtrusive attempt to manipulate cookies";
+      }
+      return self;
+    };
+
+    clearOneItem = function (key, callback, errorback) {
+      var
+        self = this,
+        keys = self[$keys],
+        unescapedKey = self._prefix + key,
+        db_key = escape(unescapedKey),
+        i = self._db.cookie.indexOf(db_key)
+      ;
+      if (~i) {
+        self._db.cookie = db_key + "=;expires=Thu, 01-Jan-1970 00:00:01 GMT";
+        i = indexOf.call(keys, unescapedKey);
+        if (~i) {
+          keys.splice(i, 1);
+          self[$length] = keys.length;
+        }
+      }
+      callback.call(self, key, self);
+    };
+
+    clearAllItems = function (callback, errorback) {
+      for (var self = this, prefix = self._prefix, keys = self[$keys], i = keys.length; i--; clearOneItem.call(
+        self, keys[i].slice(prefix.length), nothingToDoHere, nothingToDoHere
+      ));
+      callback.call(self, self, self[$length] = self[$keys][$length] = 0);
+    };
+
+    checkIfPresent = function (key, callback, errorback) {
+      var
+        self = this,
+        db = self._db.cookie,
+        db_key = escape(self._prefix + key),
+        cl = db.indexOf(db_key + '=') + db_key[$length],
+        result = NULL,
+        ce
+      ;
+      if (++cl > db_key[$length]) {
+        ce = db.indexOf(';', cl);
+        ce < 0 && (ce = db[$length]);
+        result = unescape(db.substr(cl, ce - cl));
+      }
+      callback.call(self, result, key, self);
+    };
+
+    prepareUpdate = function (key, value, callback, errorback) {
+      var
+        self = this,
+        db = self._db.cookie,
+        db_key = self._prefix + key,
+        escapedKey = escape(db_key)
+      ;
+      if (!~db.indexOf(escapedKey)) {
+        self[$length] = self[$keys].push(db_key);
+      }
+      self._db.cookie = concat(
+        escapedKey, "=", escape(value), ";",
+        "expires=", (new Date(+new Date + 365 * 60 * 60 * 24)).toGMTString()
+      );
+      callback.call(self, value, key, self);
+    };
+
+    asPrototype = AsynchronousStorage[prototype];
+    asPrototype[$key] = function key(i) {
+      var key = readLength(this)[$keys][i];
+      return key == NULL ? key : key.slice(this._prefix[$length]);
+    };
+    asPrototype[$removeItem] = function removeItem(key, callback, errorback) {
+      setTimeout(bind.call(clearOneItem, readLength(this), key, callback || nothingToDoHere, errorback || nothingToDoHere), 0);
+    };
+    asPrototype[$clear] = function clear(callback, errorback) {
+      setTimeout(bind.call(clearAllItems, readLength(this), callback || nothingToDoHere, errorback || nothingToDoHere), 0);
+    };
+    asPrototype[$getItem] = function getItem(key, callback, errorback) {
+      setTimeout(bind.call(checkIfPresent, readLength(this), key, callback || nothingToDoHere, errorback || nothingToDoHere), 0);
+    };
+    asPrototype[$setItem] = function setItem(key, value, callback, errorback) {
+      setTimeout(bind.call(prepareUpdate, readLength(this), key, value, callback || nothingToDoHere, errorback || nothingToDoHere), 0);
+    };
+  }
+
+}("asyncStorage", this));
+// var db = asyncStorage.create("db", function () {console.log(arguments)});
