@@ -464,4 +464,6 @@ $(window).load(function () {
 		'./resources/iconmonstr/checkbox-empty.svg',
 		'./resources/iconmonstr/cross.svg'
 	]);
+
+	initStorage();
 });

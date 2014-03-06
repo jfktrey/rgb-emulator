@@ -1,10 +1,11 @@
-var database = asyncStorage.create("rgb-data", function (db, numberOfEntries) {});
+function initStorage () {
+	window.database = asyncStorage.create("rgb-data", function (db, numberOfEntries) {});
+}
 
 function initDeflate () {
 	window.deflateWorker = new Worker('./scripts/gameboy-online/dependencies/rawdeflate.js');
 	deflateWorker.onmessage = function (e) {
-		database.setItem(e.data.key, e.data.value, function (value, key) {
-		});
+		database.setItem(e.data.key, e.data.value, function (value, key) {});
 	} ;
 }
 
